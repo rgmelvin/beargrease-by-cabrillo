@@ -48,9 +48,7 @@ jobs:
         run: |
           rustup default stable
           # Override incompatible wasm-bindgen
-          mkdir -p ~/.cargo/.crates2.json
-          echo '{"patches": {"wasm-bindgen": "0.2.88"}}' > ~/.cargo/.crates2.json
-          cargo install --git https://github.com/coral-xyz/anchor anchor-cli --tag v0.29.0 --locked
+          cargo install --git https://github.com/coral-xyz/anchor anchor-cli --tag v0.29.0 --locked --features wasm-bindgen/wasm-bindgen-0.2.88
 
       - name: 🧶 Install JavaScript dependencies
         run: |
