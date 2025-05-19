@@ -88,6 +88,43 @@ This automatically:
 
 ---
 
+## ✅ Using Beargrease as a GitHub Action
+
+You can also use Beargrease in your GitHub CI workflows:
+
+### 1. **Add to your workflow**
+
+```
+- name: 🐻 Run Beargrease
+  uses: rgmelvin/beargrease-by-cabrillo@v1
+  with:
+    wallet-secret: ${{ secrets.TEST_USER_KEYPAIR }}
+```
+
+This invokes Beargrease as a GitHub Action. It starts a Dockerized Solana validator, deploys your Anchor program, runs your tests, and shuts down — exactly as it would when used locally.
+
+### 2. **Define the required secret**
+
+You must define a GitHub secret called `TEST_USER_KEYPAIR` in your repository.
+ It should contain a **JSON array** (your test wallet keypair) like this:
+
+```
+[213,12,99,42, ...]
+```
+
+This secret will be written to `.ledger/wallets/test-user.json` inside the GitHub Actions runner.
+
+To generate a wallet locally:
+
+```
+solana-keygen new --no-bip39-passphrase --outfile .ledger/wallets/test-user.json
+cat .ledger/wallets/test-user.json
+```
+
+Copy the output and paste it as the `TEST_USER_KEYPAIR` secret in your repository settings.
+
+---
+
 ## 🛠️ Scripts
 
 | Script                  | Description |
