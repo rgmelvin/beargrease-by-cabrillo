@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  solana-test-validator:
+    image: solanalabs/solana:v1.18.11
+    container_name: solana-test-validator
+    command: 
+      - solana-test-validator
+      - --ledger
+      - /root/ledger
+      - --reset
+      - --quiet
+      - --no-untrusted-rpc
+      - --rpc-port
+      - "8899"
+    volumes:
+      - ./ledger:/root/ledger
+    ports:
+      - "8899:8899"
+      - "8900:8900"
+    healthcheck:
+      test: ["CMD", "curl", "-s", "http://localhost:8899"]
+      interval: 5s
+      timeout: 3s
+      retries: 60

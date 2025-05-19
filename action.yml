@@ -1,0 +1,31 @@
+# action.yml — Beargrease GitHub Action
+
+name: "Beargrease Test Runner"
+description: "A transparent, Docker-driven Solana test validator harness for Anchor programs."
+author: "Richard G. Melvin, Cabrillo! Labs"
+branding:
+  icon: "box"
+  color: "blue"
+
+inputs:
+  wallet-secret:
+    description: "Private key (JSON array) of test wallet, stored in GitHub Secrets"
+    required: true
+  test-runner:
+    description: "Specify which test strategy to use: anchor | yarn"
+    required: false
+    default: "auto"
+
+runs:
+  using: "composite"
+  steps:
+    - name: 💾 Write wallet file from secret
+      shell: bash
+      run: |
+        mkdir -p .ledger/wallets
+        echo "${{ inputs.wallet-secret }}" > .ledger/wallets/test-user.json
+
+    - name: 🧪 Run Beargrease test harness
+      shell: bash
+      run: |
+        TEST_RUNNER=${{ inputs.test-runner }}" ./scripts/run-tests.sh"

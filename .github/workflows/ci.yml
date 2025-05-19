@@ -1,0 +1,67 @@
+name: Beargrease Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 💾 Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: 💾 Cache Cargo build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: 🔧 Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl jq pkg-config libssl-dev build-essential
+
+      - name: 🧭 Install Solana CLI
+        run: |
+          sh -c "$(curl -sSfL https://release.anza.xyz/v1.17.21/install)"
+          echo "export PATH=\"$HOME/.local/share/solana/install/active_release/bin:$PATH\"" >> $GITHUB_ENV
+
+      - name: 🛠 Install Anchor CLI
+        run: |
+          rustup default stable
+          cargo install --git https://github.com/coral-xyz/anchor anchor-cli --tag v0.29.0 --locked
+
+      - name: 🧶 Install JavaScript dependencies
+        run: |
+          echo "🧶 Installing JavaScript deps..."
+          if ! yarn install; then
+            echo "⚠️ Yarn install failed. Continuing anyway (some tests may fail)." >&2
+          fi
+
+      - name: 🔐 Restore test wallet
+        run: |
+          mkdir -p .ledger/wallets
+          echo "$TEST_USER_KEYPAIR" > .ledger/wallets/test-user.json
+        env:
+          TEST_USER_KEYPAIR: ${{ secrets.TEST_USER_KEYPAIR }}
+
+      - name: 🧪 Run Beargrease Tests
+        run: ./scripts/run-tests.sh

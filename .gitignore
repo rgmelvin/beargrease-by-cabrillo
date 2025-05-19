@@ -1,0 +1,29 @@
+# Ignore Docker artifacts
+*.log
+*.pid
+
+# Node dependencies (if using JavaScript tests)
+node_modules/
+.npm/
+
+# Rust artifacts
+target/
+Cargo.lock
+
+# Anchor artifacts
+/.anchor/
+/dist/
+/programs/*/target/
+/programs/*/.anchor/
+
+# Wallets and temp files
+.ledger/
+*.json
+*.keypair
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
