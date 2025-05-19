@@ -28,4 +28,4 @@ runs:
     - name: 🧪 Run Beargrease test harness
       shell: bash
       run: |
-        TEST_RUNNER=${{ inputs.test-runner }}" ./scripts/run-tests.sh"
+        TEST_RUNNER="${{ inputs.test-runner }}" ./scripts/run-tests.sh
