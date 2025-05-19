@@ -44,12 +44,12 @@ jobs:
           sh -c "$(curl -sSfL https://release.anza.xyz/v1.17.21/install)"
           echo "export PATH=\"$HOME/.local/share/solana/install/active_release/bin:$PATH\"" >> $GITHUB_ENV
 
-      - name: 🦀 Install Rust (Pinned for Anchor v0.29.0)
+      - name: 🦀 Install Rust (Pin to 1.81.0 for compatibility)
         run: |
-          rustup install 1.73.0
-          rustup default 1.73.0
+          rustup install 1.81.0
+          rustup default 1.81.0
 
-      - name: 🛠 Install Anchor CLI (no --locked)
+      - name: 🛠 Install Anchor CLI (nv0.29.0 without --locked)
         run: |
           cargo install --git https://github.com/coral-xyz/anchor anchor-cli --tag v0.29.0
 
