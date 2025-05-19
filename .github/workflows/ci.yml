@@ -44,11 +44,14 @@ jobs:
           sh -c "$(curl -sSfL https://release.anza.xyz/v1.17.21/install)"
           echo "export PATH=\"$HOME/.local/share/solana/install/active_release/bin:$PATH\"" >> $GITHUB_ENV
 
-      - name: 🛠 Install Anchor CLI (wasm-bindgen patch)
+      - name: 🦀 Install Rust (Pinned for Anchor v0.29.0)
         run: |
-          rustup default stable
-          # Override incompatible wasm-bindgen
-          cargo install --git https://github.com/coral-xyz/anchor anchor-cli --tag v0.29.0 --locked --features wasm-bindgen/wasm-bindgen-0.2.88
+          rustup install 1.73.0
+          rustup default 1.73.0
+
+      - name: 🛠 Install Anchor CLI (no --locked)
+        run: |
+          cargo install --git https://github.com/coral-xyz/anchor anchor-cli --tag v0.29.0
 
       - name: 🧶 Install JavaScript dependencies
         run: |

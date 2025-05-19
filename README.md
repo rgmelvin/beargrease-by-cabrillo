@@ -181,7 +181,7 @@ Named after the legendary John Beargrease, the North Shore mail carrier who brav
 
 ## 🧬 About the Author
 
-I'm Richard G. Melvin, founder and sole developer at Cabrillo!, Labs. I hold a Ph.D. in Biochemistry and Molecular Biology, and I'm self-taught in systems programming, smart contracts, and the broader world of decentralized infrastructure.
+I'm Richard G. Melvin, founder and sole developer at Cabrillo!, Labs. I hold a Ph.D. in Biochemistry and Molecular Genetics, and I'm self-taught in systems programming, smart contracts, and the broader world of decentralized infrastructure.
 
 Beargrease is part of my ongoing effort to build reliable, decentralized mechanisms that give scientists and independent researchers ownership over their work—and to help more people and businesses engage meaningfully with Web3.
 
