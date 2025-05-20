@@ -25,7 +25,6 @@ runs:
         mkdir -p .ledger/wallets
         printf '%s' "${{ inputs.wallet-secret }}" | base64 -d > .ledger/wallets/test-user.json
 
-
     - name: 🐛 Debug wallet file contents
       shell: bash
       run: |
