@@ -32,6 +32,11 @@ echo "⏳ Waiting for validator readiness..."
 echo "✅ Validator is healthy. Proceeding with tests..."
 
 # ----------------------------------------------------------------------
+# Step 2.5 Decode wallet if runnin in CI
+# ----------------------------------------------------------------------
+"$BEARGREASE_ROOT/scripts/init-wallet.sh"
+
+# ----------------------------------------------------------------------
 # Step 3: Ensure deploy wallet is funded
 # ----------------------------------------------------------------------
 "$BEARGREASE_ROOT/scripts/fund-wallets.sh"

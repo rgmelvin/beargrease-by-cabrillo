@@ -31,6 +31,17 @@ if ! command -v solana >/dev/null 2>&1; then
 fi
 
 # 💥 PATCHED: Verify wallet is usable
+if ! [ -f "$WALLET_PATH" ]; then
+    echo "❌ Wallet file does not exist at: $WALLET_PATH"
+    ls -l "$WALLET_PATH" || echo "(ls failed)"
+    exit 1
+fi
+
+if ! cat "$WALLET_PATH" > /dev/null; then
+    echo "❌ Wallet file is not readable"
+    exit 1
+fi
+
 if ! solana address -k "$WALLET_PATH" >/dev/null 2>&1; then
     echo "❌ Wallet file is invalid or unreadable by solana CLI"
     echo "   → Path: $WALLET_PATH"

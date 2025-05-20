@@ -52,5 +52,7 @@ runs:
 
     - name: 🧪 Run Beargrease test harness
       shell: bash
+      env:
+        BEARGREASE_WALLET_SECRET: ${{ inputs.wallet-secret }}                                        
       run: |
         TEST_RUNNER="${{ inputs.test-runner }}" "${{ github.action_path }}/scripts/run-tests.sh"
