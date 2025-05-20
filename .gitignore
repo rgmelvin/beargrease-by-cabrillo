@@ -27,3 +27,6 @@ Thumbs.db
 
 # Environment files
 .env
+
+# Ignore wallet volume mounted from placebo
+../../placebo/.wallet-volume

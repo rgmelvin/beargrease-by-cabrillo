@@ -15,6 +15,7 @@ services:
       - "8899"
     volumes:
       - ./ledger:/root/ledger
+      - ../.wallet-volume:/wallet
     environment:
       - BEARGREASE_WALLET_SECRET=${BEARGREASE_WALLET_SECRET}
     ports:
