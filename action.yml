@@ -9,7 +9,7 @@ branding:
 
 inputs:
   wallet-secret:
-    description: "Private key (JSON array) of test wallet, stored in GitHub Secrets"
+    description: "Base64-encoded private key (JSON array) of test wallet, stored in GitHub Secrets"
     required: true
   test-runner:
     description: "Specify which test strategy to use: anchor | yarn"
@@ -19,11 +19,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: 💾 Write wallet file from secret
-      shell: bash
-      run: |
-        mkdir -p .ledger/wallets
-        printf '%s\n' "${{ inputs.wallet-secret }}" > .ledger/wallets/test-user.json
+    - name: 💾 Decode base64 wallet and write to file
+  shell: bash
+  run: |
+    mkdir -p .ledger/wallets
+    echo "${{ inputs.wallet-secret }}" | base64 -d > .ledger/wallets/test-user.json
+
 
     - name: 🐛 Debug wallet file contents
       shell: bash
