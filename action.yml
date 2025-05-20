@@ -25,6 +25,13 @@ runs:
         mkdir -p .ledger/wallets
         printf '%s\n' "${{ inputs.wallet-secret }}" > .ledger/wallets/test-user.json
 
+    - name: 🐛 Debug wallet file contents
+      shell: bash
+      run: |
+        echo "===== .ledger/wallets/test-user.json ====="
+        cat .ledger/wallets/test-user.json
+        echo "=========================================="
+
     - name: ⛓️ Install Solana CLI (via Anza)
       shell: bash
       run: |
