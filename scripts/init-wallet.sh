@@ -6,7 +6,10 @@ echo "🐻 [init-wallet.sh] Checking for BEARGREASE_WALLET_SECRET..."
 
 if [ -n "${BEARGREASE_WALLET_SECRET:-}" ]; then
     echo "🔐 Decoding wallet from BEARGREASE_WALLET_SECRET..."
-    mkdir -p /wallet
+    if [ ! -d /wallet ]; then
+        echo "❌ /wallet does not exist. Did the Docker volume fail to mount?"
+        exit 1
+    fi
     echo "$BEARGREASE_WALLET_SECRET" | base64 -d > /wallet/id.json
     chmod 600 /wallet/id.json
     export ANCHOR_WALLET="/wallet/id.json"
