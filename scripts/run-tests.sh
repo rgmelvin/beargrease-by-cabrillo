@@ -33,7 +33,6 @@ BEARGREASE_WALLET_SECRET="$BEARGREASE_WALLET_SECRET" docker run \
   -p 8899:8899 \
   -p 8900:8900 \
   -v "$PROJECT_ROOT/ledger:/root/ledger" \
-  -v "$BEARGREASE_WALLET_MOUNT:/wallet" \
   -e BEARGREASE_WALLET_SECRET="$BEARGREASE_WALLET_SECRET" \
   solanalabs/solana:v1.18.11 \
   solana-test-validator \
