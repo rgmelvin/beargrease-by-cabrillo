@@ -28,5 +28,4 @@ runs:
     - name: 🧪 Run Beargrease test harness
       shell: bash
       run: |
-        BEARGREASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-        TEST_RUNNER="${{ inputs.test-runner }}" "$BEARGREASE_DIR/scripts/run-tests.sh"
+        TEST_RUNNER="${{ inputs.test-runner }}" "${{ github.action_path }}/scripts/run-tests.sh"
