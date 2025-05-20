@@ -20,10 +20,10 @@ runs:
   using: "composite"
   steps:
     - name: 💾 Decode base64 wallet and write to file
-  shell: bash
-  run: |
-    mkdir -p .ledger/wallets
-    echo "${{ inputs.wallet-secret }}" | base64 -d > .ledger/wallets/test-user.json
+      shell: bash
+      run: |
+        mkdir -p .ledger/wallets
+        echo "${{ inputs.wallet-secret }}" | base64 -d > .ledger/wallets/test-user.json
 
 
     - name: 🐛 Debug wallet file contents
