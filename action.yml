@@ -32,6 +32,16 @@ runs:
         cat .ledger/wallets/test-user.json
         echo "=========================================="
 
+    - name: 🧪 Dump wallet file hex and byte count
+      shell: bash
+      run: |
+        echo "===== Hex dump of wallet file ====="
+        xxd .ledger/wallets/test-user.json
+        echo "===== Byte count ====="
+        wc -c .ledger/wallets/test-user.json
+        echo "==================================="
+
+
     - name: ⛓️ Install Solana CLI (via Anza)
       shell: bash
       run: |
