@@ -23,7 +23,7 @@ runs:
       shell: bash
       run: |
         mkdir -p .ledger/wallets
-        echo "${{ inputs.wallet-secret }}" > .ledger/wallets/test-user.json
+        printf '%s\n' "${{ inputs.wallet-secret }}" > .ledger/wallets/test-user.json
 
     - name: ⛓️ Install Solana CLI (via Anza)
       shell: bash
