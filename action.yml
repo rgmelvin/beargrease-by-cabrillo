@@ -19,11 +19,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: 💾 Decode base64 wallet and write to file
+    - name: 💾 Decode raw base64 keypair and write to file
       shell: bash
       run: |
         mkdir -p .ledger/wallets
         printf '%s' "${{ inputs.wallet-secret }}" | base64 -d > .ledger/wallets/test-user.json
+
 
     - name: 🐛 Debug wallet file contents
       shell: bash
