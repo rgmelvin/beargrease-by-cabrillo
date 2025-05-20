@@ -23,8 +23,7 @@ runs:
       shell: bash
       run: |
         mkdir -p .ledger/wallets
-        echo "${{ inputs.wallet-secret }}" | tr -d '\n' | base64 -d > .ledger/wallets/test-user.json
-
+        printf '%s' "${{ inputs.wallet-secret }}" | base64 -d > .ledger/wallets/test-user.json
 
     - name: 🐛 Debug wallet file contents
       shell: bash
