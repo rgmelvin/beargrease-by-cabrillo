@@ -4,6 +4,10 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(pwd)"
 
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃ FUND-WALLETS.SH (Beargrease Utility)                         ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
 # Extract wallet path from Anchor.toml
 WALLET_PATH=$(grep -E '^wallet\s*=\s*"' "$PROJECT_ROOT/Anchor.toml" | sed -E 's/wallet\s*=\s*"(.*)"/\1/')
 
@@ -18,6 +22,17 @@ if [[ "$WALLET_PATH" != /* ]]; then
 fi
 
 echo "💼 Checking deploy wallet: $WALLET_PATH"
+
+if ! command -v solana >/dev/null 2>$1; then
+    echo "❌ solana CLI is not installed or not in PATH"
+    exit 1
+fi
+if ! solana address -k "$WALLET_PATH" >/dev/null 2>$1; then
+    echo "❌ Wallet file is invalid or unreadable by solana CLI"
+    echo "   → Path: $WALLET_PATH"
+    echo "   → Tip: Check JSON formatting or base58 string"
+    exit 1
+fi
 DEPLOY_PUBKEY=$(solana address -k "$WALLET_PATH")
 BALANCE_SOL=$(solana balance -k "$WALLET_PATH" | awk '{print $1}')
 REQUIRED_BALANCE=1.5
