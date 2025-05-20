@@ -25,12 +25,13 @@ runs:
         mkdir -p .ledger/wallets
         echo "${{ inputs.wallet-secret }}" > .ledger/wallets/test-user.json
 
-    - name: ⛓️ Install Solana CLI via Anza
+    - name: ⛓️ Install Solana CLI (via Anza)
       shell: bash
       run: |
         sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
-        echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+        export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
         solana --version
+        echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
 
     - name: 🧪 Run Beargrease test harness
       shell: bash
