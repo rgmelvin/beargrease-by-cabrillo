@@ -2,14 +2,14 @@
 set -euo pipefail
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃ BEARGREASE v1.0.14                                            ┃
+# ┃ BEARGREASE v1.0.16                                           ┃
 # ┃ Solana Docker Validator Test Harness                         ┃
 # ┃ Maintainer: Cabrillo Labs, Ltd.                              ┃
 # ┃ License: MIT                                                 ┃
 # ┃ Homepage: https://github.com/rgmelvin/beargrease-by-cabrillo ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-echo "🐻 Beargrease Version: v1.0.0"
+echo "🐻 Beargrease Version: v1.0.16"
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
@@ -33,6 +33,7 @@ BEARGREASE_WALLET_SECRET="$BEARGREASE_WALLET_SECRET" docker run \
   -p 8899:8899 \
   -p 8900:8900 \
   -v "$PROJECT_ROOT/ledger:/root/ledger" \
+  -v "$BEARGREASE_WALLET_MOUNT:/wallet" \
   -e BEARGREASE_WALLET_SECRET="$BEARGREASE_WALLET_SECRET" \
   solanalabs/solana:v1.18.11 \
   solana-test-validator \
