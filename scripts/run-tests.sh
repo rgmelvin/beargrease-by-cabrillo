@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃ BEARGREASE v1.0.0                                            ┃
+# ┃ BEARGREASE v1.0.14                                            ┃
 # ┃ Solana Docker Validator Test Harness                         ┃
 # ┃ Maintainer: Cabrillo Labs, Ltd.                              ┃
 # ┃ License: MIT                                                 ┃
@@ -22,7 +22,27 @@ echo "🐻 Beargrease Test Harness: Start → Validate → Test → Shutdown"
 # Step 1: Start Validator
 # ----------------------------------------------------------------------
 echo "🔧 Launching Solana validator container via Docker..."
-"$BEARGREASE_ROOT/docker/start-validator.sh"
+echo "🔧 Mounting wallet volume for CI..."
+export BEARGREASE_WALLET_MOUNT="$(realpath "$PROJECT_ROOT/.wallet-volume")"
+export BEARGREASE_WALLET_SECRET="${BEARGREASE_WALLET_SECRET:-}"
+
+BEARGREASE_WALLET_SECRET="$BEARGREASE_WALLET_SECRET" docker run \
+  --rm \
+  -d \
+  --name solana-test-validator \
+  -p 8899:8899 \
+  -p 8900:8900 \
+  -v "$PROJECT_ROOT/ledger:/root/ledger" \
+  -v "$BEARGREASE_WALLET_MOUNT:/wallet" \
+  -e BEARGREASE_WALLET_SECRET="$BEARGREASE_WALLET_SECRET" \
+  solanalabs/solana:v1.18.11 \
+  solana-test-validator \
+    --ledger /root/ledger \
+    --reset \
+    --quiet \
+    --no-untrusted-rpc \
+    --rpc-port 8899
+
 
 # ----------------------------------------------------------------------
 # Step 2: Wait for health
