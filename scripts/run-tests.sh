@@ -113,6 +113,11 @@ if [[ "${CI:-}" == "true" ]]; then
   PROGRAM_NAME=$(grep -A1 '\[programs.localnet\]' Anchor.toml | grep -v '\[' | cut -d= -f1 | xargs)
   PROGRAM_ID=$(grep "$PROGRAM_NAME" Anchor.toml | cut -d'"' -f2)
 
+  echo "⬆️  Uploading IDL to program account on chain..."
+  anchor idl upgrade target/idl/${PROGRAM_NAME}.json \
+    --program-id "$PROGRAM_ID" \
+    --provider.wallet "$ANCHOR_WALLET"
+
   anchor idl fetch "$PROGRAM_ID" \
     --provider.wallet "$ANCHOR_WALLET" \
     > target/idl/${PROGRAM_NAME}.json
