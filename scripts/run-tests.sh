@@ -111,7 +111,7 @@ if [[ "${CI:-}" == "true" ]]; then
   echo "📥 Regenerating client bindings from updated IDL..."
 
   PROGRAM_NAME=$(grep -A1 '\[programs.localnet\]' Anchor.toml | grep -v '\[' | cut -d= -f1 | xargs)
-  PROGRAM_ID=$(solana address -k target/deploy/${PROGRAM_NAME}-keypair.json)
+  PROGRAM_ID=$(grep "$PROGRAM_NAME" Anchor.toml | cut -d'"' -f2)
 
   anchor idl fetch "$PROGRAM_ID" > target/idl/${PROGRAM_NAME}.json
   anchor client gen target/idl/${PROGRAM_NAME}.json \
