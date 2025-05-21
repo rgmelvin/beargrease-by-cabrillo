@@ -109,6 +109,7 @@ echo "📝 Updating Anchor.toml and lib.rs with deployed program ID..."
 # 🔁 Rebuild to regenerate bindings after program ID update (in CI only)
 if [[ "${CI:-}" == "true" ]]; then
   echo "🔄 Rebuilding after program ID patch (CI environment detected)..."
+  anchor clean
   anchor build
 fi
 
