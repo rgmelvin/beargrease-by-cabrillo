@@ -2,14 +2,14 @@
 set -euo pipefail
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃ BEARGREASE v1.0.20                                           ┃
+# ┃ BEARGREASE v1.0.22                                           ┃
 # ┃ Solana Docker Validator Test Harness                         ┃
 # ┃ Maintainer: Cabrillo Labs, Ltd.                              ┃
 # ┃ License: MIT                                                 ┃
 # ┃ Homepage: https://github.com/rgmelvin/beargrease-by-cabrillo ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-echo "🐻 Beargrease Version: v1.0.20"
+echo "🐻 Beargrease Version: v1.0.22"
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
@@ -109,6 +109,7 @@ echo "📝 Updating Anchor.toml and lib.rs with deployed program ID..."
 # 🔁 Rebuild to regenerate bindings after program ID update (in CI only)
 if [[ "${CI:-}" == "true" ]]; then
   echo "🔄 Rebuilding after program ID patch (CI environment detected)..."
+  rm -fr target/idl target/types
   anchor clean
   anchor build
 fi
