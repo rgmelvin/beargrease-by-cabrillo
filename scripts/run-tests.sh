@@ -41,7 +41,8 @@ BEARGREASE_WALLET_SECRET="$BEARGREASE_WALLET_SECRET" docker run \
     --reset \
     --quiet \
     --no-untrusted-rpc \
-    --rpc-port 8899
+    --rpc-port 8899 \
+    --allow-unlimited-airdrops
 
 
 # ----------------------------------------------------------------------
