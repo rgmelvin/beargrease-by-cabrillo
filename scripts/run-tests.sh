@@ -2,14 +2,14 @@
 set -euo pipefail
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃ BEARGREASE v1.0.19                                           ┃
+# ┃ BEARGREASE v1.0.20                                           ┃
 # ┃ Solana Docker Validator Test Harness                         ┃
 # ┃ Maintainer: Cabrillo Labs, Ltd.                              ┃
 # ┃ License: MIT                                                 ┃
 # ┃ Homepage: https://github.com/rgmelvin/beargrease-by-cabrillo ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-echo "🐻 Beargrease Version: v1.0.19"
+echo "🐻 Beargrease Version: v1.0.20"
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
