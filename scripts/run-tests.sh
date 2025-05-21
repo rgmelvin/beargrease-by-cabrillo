@@ -106,6 +106,12 @@ anchor deploy
 echo "📝 Updating Anchor.toml and lib.rs with deployed program ID..."
 "$BEARGREASE_ROOT/scripts/update-program-id.sh"
 
+# 🔁 Rebuild to regenerate bindings after program ID update (in CI only)
+if [[ "${CI:-}" == "true" ]]; then
+  echo "🔄 Rebuilding after program ID patch (CI environment detected)..."
+  anchor build
+fi
+
 # ---------------------------------------------------------------
 # Step 6: Determine and run test strategy
 # ---------------------------------------------------------------
