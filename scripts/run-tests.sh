@@ -2,14 +2,14 @@
 set -euo pipefail
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃ BEARGREASE v1.0.23                                           ┃
+# ┃ BEARGREASE v1.0.26                                           ┃
 # ┃ Solana Docker Validator Test Harness                         ┃
 # ┃ Maintainer: Cabrillo Labs, Ltd.                              ┃
 # ┃ License: MIT                                                 ┃
 # ┃ Homepage: https://github.com/rgmelvin/beargrease-by-cabrillo ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-echo "🐻 Beargrease Version: v1.0.23"
+echo "🐻 Beargrease Version: v1.0.26"
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
@@ -114,8 +114,8 @@ if [[ "${CI:-}" == "true" ]]; then
   PROGRAM_ID=$(grep "$PROGRAM_NAME" Anchor.toml | cut -d'"' -f2)
 
   echo "⬆️  Uploading IDL to program account on chain..."
-  anchor idl upgrade target/idl/${PROGRAM_NAME}.json \
-    --program-id "$PROGRAM_ID" \
+  anchor idl upgrade "$PROGRAM_ID" \
+    --filepath target/idl/${PROGRAM_NAME}.json \
     --provider.wallet "$ANCHOR_WALLET"
 
   anchor idl fetch "$PROGRAM_ID" \
