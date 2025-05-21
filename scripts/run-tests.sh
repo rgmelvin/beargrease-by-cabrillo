@@ -114,7 +114,7 @@ if [[ "${CI:-}" == "true" ]]; then
   PROGRAM_ID=$(grep "$PROGRAM_NAME" Anchor.toml | cut -d'"' -f2)
 
   echo "🧬 Generating fresh local IDL..."
-  anchor idl parse > target/idl/${PROGRAM_NAME}.json
+  anchor idl extract > target/idl/${PROGRAM_NAME}.json
 
   anchor client gen target/idl/${PROGRAM_NAME}.json \
     --program-id "$PROGRAM_ID" \
