@@ -2,14 +2,14 @@
 set -euo pipefail
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃ BEARGREASE v1.0.22                                           ┃
+# ┃ BEARGREASE v1.0.23                                           ┃
 # ┃ Solana Docker Validator Test Harness                         ┃
 # ┃ Maintainer: Cabrillo Labs, Ltd.                              ┃
 # ┃ License: MIT                                                 ┃
 # ┃ Homepage: https://github.com/rgmelvin/beargrease-by-cabrillo ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-echo "🐻 Beargrease Version: v1.0.22"
+echo "🐻 Beargrease Version: v1.0.23"
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
@@ -106,9 +106,19 @@ anchor deploy
 echo "📝 Updating Anchor.toml and lib.rs with deployed program ID..."
 "$BEARGREASE_ROOT/scripts/update-program-id.sh"
 
-# 🔁 Rebuild to regenerate bindings after program ID update (in CI only)
+# 🔁 Regenerate client bindings after program ID patch (in CI only)
 if [[ "${CI:-}" == "true" ]]; then
-  echo "🔄 Rebuilding after program ID patch (CI environment detected)..."
+  echo "📥 Regenerating client bindings from updated IDL..."
+
+  PROGRAM_NAME=$(grep -A1 '\[programs.localnet\]' Anchor.toml | grep -v '\[' | cut -d= -f1 | xargs)
+  PROGRAM_ID=$(solana address -k target/deploy/${PROGRAM_NAME}-keypair.json)
+
+  anchor idl fetch "$PROGRAM_ID" > target/idl/${PROGRAM_NAME}.json
+  anchor client gen target/idl/${PROGRAM_NAME}.json \
+    --program-id "$PROGRAM_ID" \
+    --output target/types/${PROGRAM_NAME}.ts
+
+  echo "🔄 Cleaning and rebuilding after IDL + binding regeneration..."
   rm -fr target/idl target/types
   anchor clean
   anchor build
