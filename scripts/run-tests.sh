@@ -113,13 +113,16 @@ if [[ "${CI:-}" == "true" ]]; then
   PROGRAM_NAME=$(grep -A1 '\[programs.localnet\]' Anchor.toml | grep -v '\[' | cut -d= -f1 | xargs)
   PROGRAM_ID=$(grep "$PROGRAM_NAME" Anchor.toml | cut -d'"' -f2)
 
-  anchor idl fetch "$PROGRAM_ID" > target/idl/${PROGRAM_NAME}.json
+  anchor idl fetch "$PROGRAM_ID" \
+    --provider.wallet "$ANCHOR_WALLET" \
+    > target/idl/${PROGRAM_NAME}.json
+
   anchor client gen target/idl/${PROGRAM_NAME}.json \
     --program-id "$PROGRAM_ID" \
-    --output target/types/${PROGRAM_NAME}.ts
+    --output target/types/${PROGRAM_NAME}.ts \
+    --provider.wallet "$ANCHOR_WALLET"
 
   echo "🔄 Cleaning and rebuilding after IDL + binding regeneration..."
-  rm -fr target/idl target/types
   anchor clean
   anchor build
 fi
