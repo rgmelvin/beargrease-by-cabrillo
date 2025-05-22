@@ -25,11 +25,11 @@ runs:
         toolchain: stable
         override: true
 
-    - name: 🧭 Install Solana CLI
+    - name: ⛓️ Install Solana CLI via Anza
       run: |
         sh -c "$(curl -sSfL https://release.anza.xyz/v1.18.11/install)"
-        echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
-        solana --version  # 🧪 Confirm installation
+        export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
+        solana --version
       shell: bash
 
 
