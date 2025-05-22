@@ -28,8 +28,10 @@ runs:
     - name: 🧭 Install Solana CLI
       run: |
         sh -c "$(curl -sSfL https://release.solana.com/v1.18.11/install)"
-        echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+        export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+        solana --version  # 🧪 Confirm installation
       shell: bash
+
 
     - name: 🪝 Install jq (if missing)
       run: |
@@ -47,6 +49,7 @@ runs:
 
     - name: 🐻 Run Beargrease test harness
       run: |
+        export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
         TEST_RUNNER="${{ inputs.test-runner }}" \
         BEARGREASE_WALLET_SECRET="${{ env.BEARGREASE_WALLET_SECRET }}" \
         PROJECT_ROOT="${GITHUB_WORKSPACE}" \
