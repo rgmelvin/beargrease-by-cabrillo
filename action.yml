@@ -25,6 +25,12 @@ runs:
         toolchain: stable
         override: true
 
+    - name: 🧭 Install Solana CLI
+      run: |
+        sh -c "$(curl -sSfL https://release.solana.com/v1.18.11/install)"
+        echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+      shell: bash
+
     - name: 🪝 Install jq (if missing)
       run: |
         if ! command -v jq &>/dev/null; then
