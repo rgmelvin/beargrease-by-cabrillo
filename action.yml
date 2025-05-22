@@ -43,5 +43,5 @@ runs:
       run: |
         TEST_RUNNER="${{ inputs.test-runner }}" \
         BEARGREASE_WALLET_SECRET="${{ env.BEARGREASE_WALLET_SECRET }}" \
-        ./scripts/run-tests.sh
+        "${{ github.action_path }}/scripts/run-tests.sh"
       shell: bash
