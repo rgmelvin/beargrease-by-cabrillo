@@ -2,7 +2,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="${GITHUB_WORKSPACE:-$(pwd)}"
+PROJECT_ROOT="${PROJECT_ROOT:-$(pwd)}"
 
 # Extract wallet path from Anchor.toml
 WALLET_PATH=$(grep -E '^wallet\s*=\s*"' "$PROJECT_ROOT/Anchor.toml" | sed -E 's/wallet\s*=\s*"(.*)"/\1/')

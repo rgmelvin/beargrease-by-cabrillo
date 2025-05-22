@@ -40,9 +40,9 @@ runs:
       shell: bash
 
     - name: 🐻 Run Beargrease test harness
-      working-directory: ${{ github.action_path }}
       run: |
         TEST_RUNNER="${{ inputs.test-runner }}" \
         BEARGREASE_WALLET_SECRET="${{ env.BEARGREASE_WALLET_SECRET }}" \
-        ./scripts/run-tests.sh
+        PROJECT_ROOT="${GITHUB_WORKSPACE}" \
+        "${{ github.action_path }}/scripts/run-tests.sh"
       shell: bash
