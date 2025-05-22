@@ -11,7 +11,7 @@ echo "🛑 Attempting to shut down validator conatainer.."
 
 # Graceful shutdown if running
 if docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-    docker-compose -f "$COMPOSE_FILE" down --remove-orphans
+    docker compose -f "$COMPOSE_FILE" down --remove-orphans
     echo "✅ Validator container stopped and removed via docker compose."
 else
     echo "⚠️ Validator container '$CONTAINER_NAME' not running."

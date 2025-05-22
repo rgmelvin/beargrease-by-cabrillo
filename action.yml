@@ -27,8 +27,8 @@ runs:
 
     - name: 🧭 Install Solana CLI
       run: |
-        sh -c "$(curl -sSfL https://release.solana.com/v1.18.11/install)"
-        export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+        sh -c "$(curl -sSfL https://release.anza.xyz/v1.18.11/install)"
+        echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
         solana --version  # 🧪 Confirm installation
       shell: bash
 
