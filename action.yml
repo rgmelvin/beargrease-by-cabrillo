@@ -1,31 +1,45 @@
-# action.yml — Beargrease GitHub Action
-
-name: "Beargrease Test Runner"
-description: "A transparent, Docker-driven Solana test validator harness for Anchor programs."
-author: "Richard G. Melvin, Cabrillo! Labs"
-branding:
-  icon: "box"
-  color: "blue"
+name: Beargrease
+description: Solana Docker test harness
+author: rgmelvin
 
 inputs:
-  wallet-secret:
-    description: "Private key (JSON array) of test wallet, stored in GitHub Secrets"
-    required: true
   test-runner:
-    description: "Specify which test strategy to use: anchor | yarn"
+    description: "Which test runner to use: auto, anchor, or yarn"
     required: false
     default: "auto"
 
 runs:
   using: "composite"
   steps:
-    - name: 💾 Write wallet file from secret
-      shell: bash
-      run: |
-        mkdir -p .ledger/wallets
-        echo "${{ inputs.wallet-secret }}" > .ledger/wallets/test-user.json
+    - name: 🧾 Checkout project
+      uses: actions/checkout@v4
 
-    - name: 🧪 Run Beargrease test harness
-      shell: bash
+    - name: 🧰 Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: 🦀 Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+
+    - name: 🪝 Install jq (if missing)
       run: |
-        TEST_RUNNER=${{ inputs.test-runner }}" ./scripts/run-tests.sh"
+        if ! command -v jq &>/dev/null; then
+          sudo apt-get update && sudo apt-get install -y jq
+        fi
+      shell: bash
+
+    - name: ⛓️ Install Anchor
+      run: |
+        cargo install --git https://github.com/coral-xyz/anchor anchor-cli --tag v0.31.1 --force
+      shell: bash
+
+    - name: 🐻 Run Beargrease test harness
+      run: |
+        TEST_RUNNER="${{ inputs.test-runner }}" \
+        BEARGREASE_WALLET_SECRET="${{ env.BEARGREASE_WALLET_SECRET }}" \
+        ./scripts/run-tests.sh
+      shell: bash
