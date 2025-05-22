@@ -25,7 +25,7 @@ REQUIRED_BALANCE=1.5
 # ✅ FIXED LINE — tested and safe
 if [ "$(echo "$BALANCE_SOL < $REQUIRED_BALANCE" | bc -l)" = "1" ]; then
     echo "🌉 Airdropping SOL to deploy wallet: $DEPLOY_PUBKEY (current: ${BALANCE_SOL} SOL)"
-    solana airdrop 2 "$DEPLOY_PUBKEY"
+    solana airdrop 2 "$DEPLOY_PUBKEY" --url http://localhost:8899
     sleep 2
     echo "🎉 Done. New balance:"
     solana balance -k "$WALLET_PATH"
