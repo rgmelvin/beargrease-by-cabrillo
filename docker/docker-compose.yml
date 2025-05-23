@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   solana-test-validator:
     image: solanalabs/solana:v1.18.11
