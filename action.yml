@@ -25,7 +25,7 @@ runs:
         yarn install || (echo "❌ yarn install failed" && exit 1)
       shell: bash
 
-    - name: 🧭 Debug: Confirm node_modules contents
+    - name: "🧭 Debug: Confirm node_modules contents"
       run: |
         ls -al node_modules/.bin
         ls -al node_modules/ts-mocha || echo "❌ ts-mocha directory missing"
