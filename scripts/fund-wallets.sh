@@ -49,30 +49,7 @@ echo "💼 Checking deploy wallet: $DEPLOY_PUBKEY (Current: $BALANCE_SOL SOL)"
 
 # Only airdrop if needed
 if [ "$(echo "$BALANCE_SOL < $REQUIRED_BALANCE" | bc -l)" = "1" ]; then
-<<<<<<< HEAD
-    echo "🌉 Airdropping 2 SOL to $DEPLOY_PUBKEY..."
 
-    # Ensure that the container is using the correct RPC
-    docker exec solana-test-validator solana config set --url http://localhost:8899
-
-    for attempt in {1..5}; do
-        echo "🔁 Airdrop attempt $attempt..."
-        if docker exec solana-test-validator solana airdrop 2 "$DEPLOY_PUBKEY"; then
-            echo "🎉 Airdrop successful inside container."
-            sleep 2
-            docker exec solana-test-validator solana balance "$DEPLOY_PUBKEY"
-            break
-        else
-            echo "⚠️ Airdrop attempt $attempt failed."
-            if [ "$attempt" -lt 5 ]; then
-                echo "⏳ Retrying in 3 seconds..."
-                sleep 3
-            else
-                echo "❌ Airdrop failed after 5 attempts."
-                exit 1
-            fi
-        fi
-=======
     echo "🌉 Airdropping SOL to deploy wallet: $DEPLOY_PUBKEY (current: ${BALANCE_SOL} SOL)"
     solana airdrop 2 "$DEPLOY_PUBKEY" --url http://localhost:8899
 
@@ -88,7 +65,6 @@ if [ "$(echo "$BALANCE_SOL < $REQUIRED_BALANCE" | bc -l)" = "1" ]; then
             break
         fi
         sleep 1
->>>>>>> 763dc4d (v1.0.34 trigger)
     done
 else
     echo "✅ Wallet already has sufficient funds: ${BALANCE_SOL} SOL"
