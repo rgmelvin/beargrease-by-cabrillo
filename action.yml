@@ -20,7 +20,15 @@ runs:
         node-version: 18
 
     - name: 📦 Install dependencies
-      run: yarn install
+      run: |
+        echo "Running yarn install in $PWD"
+        yarn install || (echo "❌ yarn install failed" && exit 1)
+      shell: bash
+
+    - name: 🧭 Debug: Confirm node_modules contents
+      run: |
+        ls -al node_modules/.bin
+        ls -al node_modules/ts-mocha || echo "❌ ts-mocha directory missing"
       shell: bash
 
     - name: 🦀 Install Rust
