@@ -49,6 +49,7 @@ echo "💼 Checking deploy wallet: $DEPLOY_PUBKEY (Current: $BALANCE_SOL SOL)"
 
 # Only airdrop if needed
 if [ "$(echo "$BALANCE_SOL < $REQUIRED_BALANCE" | bc -l)" = "1" ]; then
+<<<<<<< HEAD
     echo "🌉 Airdropping 2 SOL to $DEPLOY_PUBKEY..."
 
     # Ensure that the container is using the correct RPC
@@ -71,6 +72,23 @@ if [ "$(echo "$BALANCE_SOL < $REQUIRED_BALANCE" | bc -l)" = "1" ]; then
                 exit 1
             fi
         fi
+=======
+    echo "🌉 Airdropping SOL to deploy wallet: $DEPLOY_PUBKEY (current: ${BALANCE_SOL} SOL)"
+    solana airdrop 2 "$DEPLOY_PUBKEY" --url http://localhost:8899
+
+    # Wait for balance to reflect
+    echo "⏳ Waiting for airdrop to finalize..."
+    for i in {1..10}; do
+        FULL_BALANCE_OUTPUT=$(solana balance -k "$WALLET_PATH" --url http://localhost:8899)
+        BALANCE_SOL=$(echo "$FULL_BALANCE_OUTPUT" | awk '{print $1}')
+        echo "🔁 Attempt $i: Balance = $BALANCE_SOL SOL"
+
+        if [ "$(echo "$BALANCE_SOL >= $REQUIRED_BALANCE" | bc -l)" = "1" ]; then
+            echo "🎉 Airdrop confirmed. Balance: ${BALANCE_SOL} SOL"
+            break
+        fi
+        sleep 1
+>>>>>>> 763dc4d (v1.0.34 trigger)
     done
 else
     echo "✅ Wallet already has sufficient funds: ${BALANCE_SOL} SOL"
