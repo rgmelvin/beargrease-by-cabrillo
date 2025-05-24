@@ -99,48 +99,6 @@ echo "🚀 Deploying program to local validator"
 echo "🚀 Running: anchor deploy"
 anchor deploy
 
-# 📛 Determine program name from Anchor.toml before extracting program ID
-PROGRAM_NAME=$(grep -A1 '\[programs.localnet\]' "$ANCHOR_TOML_PATH" | grep -v '\[programs.localnet\]' | cut -d'=' -f1 | xargs)
-
-if [[ -z "$PROGRAM_NAME" ]]; then
-  echo "❌ Could not determine program name from Anchor.toml"
-  exit 1
-fi
-
-# 🔍 Extract deployed PROGRAM_ID from keypair file
-KEYPAIR_PATH="$PROJECT_ROOT/target/deploy/${PROGRAM_NAME}-keypair.json"
-if [[ ! -f "$KEYPAIR_PATH" ]]; then
-  echo "❌ Keypair file not found: $KEYPAIR_PATH"
-  exit 1
-fi
-
-PROGRAM_ID=$(solana address -k "$KEYPAIR_PATH")
-if [[ -z "$PROGRAM_ID" ]]; then
-  echo "❌ Failed to extract program ID"
-  exit 1
-fi
-
-
-# 🕓 Wait until the deployed program is available to the validator
-echo "⏳ Waiting for deployed program to become available to validator..."
-
-RETRIES=20
-SLEEP=0.5
-for i in $(seq 1 $RETRIES); do
-  if solana program show "$PROGRAM_ID" > /dev/null 2>&1; then
-    echo "✅ Program is now available on validator"
-    break
-  else
-    echo "⏳ Still waiting... ($i/$RETRIES)"
-    sleep $SLEEP
-  fi
-done
-
-if ! solana program show "$PROGRAM_ID" > /dev/null 2>&1; then
-  echo "❌ Timeout: Program never became available to validator"
-  exit 1
-fi
-
 echo "🔁 Rebuilding after deploy to ensure fresh IDL output..."
 anchor build
 
@@ -165,6 +123,25 @@ if [[ -z "$EMBEDDED_ID" ]]; then
   exit 1
 else
   echo "📦 Confirmed: Rebuilt IDL contains program ID: $EMBEDDED_ID"
+fi
+
+# 🕓 Wait for program to be indexed by validator before testing
+echo "⏳ Waiting for validator to recognize deployed program ID..."
+RETRIES=60
+SLEEP=0.5
+for i in $(seq 1 $RETRIES); do
+  if solana program show "$EMBEDDED_ID" > /dev/null 2>&1; then
+    echo "✅ Validator recognizes program ID: $EMBEDDED_ID"
+    break
+  else
+    echo "⏳ Still waiting for validator to index program... ($i/$RETRIES)"
+    sleep $SLEEP
+  fi
+done
+
+if ! solana program show "$EMBEDDED_ID" > /dev/null 2>&1; then
+  echo "❌ Timeout: Validator did not recognize program ID: $EMBEDDED_ID"
+  exit 1
 fi
 
 # ---------------------------------------------------------------
