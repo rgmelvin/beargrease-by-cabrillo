@@ -99,13 +99,12 @@ echo "🚀 Deploying program to local validator"
 echo "🚀 Running: anchor deploy"
 anchor deploy
 
-echo "📝 Updating Anchor.toml and lib.rs with deployed program ID..."
+echo "🔁 Rebuilding after deploy to ensure fresh IDL output..."
+anchor build
+
+echo "📝 Updating Anchor.toml, lib.rs, and IDL metadata.address..."
 "$BEARGREASE_ROOT/scripts/update-program-id.sh"
 
-echo "🧪 CI MARKER: Using run-tests.sh revision with double-build step"
-
-echo "🔁 Rebuilding to update IDL metadata with new program ID..."
-anchor build
 
 # 📛 Determine program name again for confirmation step
 PROGRAM_NAME=$(grep -A1 '\[programs.localnet\]' "$ANCHOR_TOML_PATH" | grep -v '\[programs.localnet\]' | cut -d'=' -f1 | xargs)
@@ -123,7 +122,7 @@ if [[ -z "$EMBEDDED_ID" ]]; then
   echo "❌ IDL metadata.address not set in: $IDL_PATH"
   exit 1
 else
-  echo "📦 Confirmed: IDL metadata.address = $EMBEDDED_ID"
+  echo "📦 Confirmed: Rebuilt IDL contains program ID: $EMBEDDED_ID"
 fi
 
 # ---------------------------------------------------------------
