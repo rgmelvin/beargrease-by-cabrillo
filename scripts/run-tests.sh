@@ -107,6 +107,17 @@ echo "🧪 CI MARKER: Using run-tests.sh revision with double-build step"
 echo "🔁 Rebuilding to update IDL metadata with new program ID..."
 anchor build
 
+# 📦 Confirm program ID is embedded in rebuilt IDL
+IDL_PATH="$PROJECT_ROOT/target/idl/${PROGRAM_NAME}.json"
+EMBEDDED_ID=$(jq -r '.metadata.address // empty' "$IDL_PATH")
+
+if [[ -z "$EMBEDDED_ID" ]]; then
+  echo "❌ IDL metadata.address not set in: $IDL_PATH"
+  exit 1
+else
+  echo "📦 Confirmed: IDL metadata.address = $EMBEDDED_ID"
+fi
+
 # ---------------------------------------------------------------
 # Step 6: Determine and run test strategy
 # ---------------------------------------------------------------
