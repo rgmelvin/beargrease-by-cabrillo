@@ -1,0 +1,16 @@
+{
+  "name": "beargrease",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:rgmelvin/beargrease-by-cabrillo.git",
+  "license": "MIT",
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@solana/web3.js": "^1.98.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
