@@ -123,7 +123,8 @@ if [[ -z "$EMBEDDED_ID" ]]; then
 else
   echo "📦 Confirmed: Rebuilt IDL contains program ID: $EMBEDDED_ID"
   echo "⏳ Waiting for validator to recognize deployed program ID via simulation..."
-  npx ts-node "$BEARGREASE_ROOT/scripts/wait-for-program.mts"
+  node --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"))' "$BEARGREASE_ROOT/scripts/wait-for-program.mts"
+
 fi
 
 # ---------------------------------------------------------------
