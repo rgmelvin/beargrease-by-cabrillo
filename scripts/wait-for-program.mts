@@ -52,6 +52,11 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error("❌ wait-for-program.mts failed:", err?.message || err);
+  console.error("❌ wait-for-program.mts failed:",
+    err instanceof Error
+      ? err.message
+      : typeof err === "string"
+        ? err
+        : JSON.stringify(err, null, 2));
   process.exit(1);
 });
