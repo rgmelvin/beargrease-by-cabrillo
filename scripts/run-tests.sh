@@ -107,6 +107,14 @@ echo "🧪 CI MARKER: Using run-tests.sh revision with double-build step"
 echo "🔁 Rebuilding to update IDL metadata with new program ID..."
 anchor build
 
+# 📛 Determine program name again for confirmation step
+PROGRAM_NAME=$(grep -A1 '\[programs.localnet\]' "$ANCHOR_TOML_PATH" | grep -v '\[programs.localnet\]' | cut -d'=' -f1 | xargs)
+
+if [[ -z "$PROGRAM_NAME" ]]; then
+  echo "❌ Could not determine program name from Anchor.toml for verification step"
+  exit 1
+fi
+
 # 📦 Confirm program ID is embedded in rebuilt IDL
 IDL_PATH="$PROJECT_ROOT/target/idl/${PROGRAM_NAME}.json"
 EMBEDDED_ID=$(jq -r '.metadata.address // empty' "$IDL_PATH")
