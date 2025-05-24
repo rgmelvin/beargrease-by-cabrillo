@@ -102,6 +102,8 @@ anchor deploy
 echo "📝 Updating Anchor.toml and lib.rs with deployed program ID..."
 "$BEARGREASE_ROOT/scripts/update-program-id.sh"
 
+echo "🧪 CI MARKER: Using run-tests.sh revision with double-build step"
+
 echo "🔁 Rebuilding to update IDL metadata with new program ID..."
 anchor build
 
