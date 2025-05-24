@@ -105,6 +105,8 @@ anchor build
 echo "📝 Updating Anchor.toml, lib.rs, and IDL metadata.address..."
 "$BEARGREASE_ROOT/scripts/update-program-id.sh"
 
+echo "🕒 Sleeping 10s to allow validator to begin indexing..."
+sleep 10
 
 # 📛 Determine program name again for confirmation step
 PROGRAM_NAME=$(grep -A1 '\[programs.localnet\]' "$ANCHOR_TOML_PATH" | grep -v '\[programs.localnet\]' | cut -d'=' -f1 | xargs)
