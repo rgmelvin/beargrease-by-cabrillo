@@ -51,4 +51,7 @@ async function main() {
   process.exit(1);
 }
 
-main();
+main().catch((err) => {
+  console.error("❌ wait-for-program.mts failed:", err?.message || err);
+  process.exit(1);
+});
