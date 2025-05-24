@@ -102,6 +102,9 @@ anchor deploy
 echo "📝 Updating Anchor.toml and lib.rs with deployed program ID..."
 "$BEARGREASE_ROOT/scripts/update-program-id.sh"
 
+echo "🔁 Rebuilding to update IDL metadata with new program ID..."
+anchor build
+
 # ---------------------------------------------------------------
 # Step 6: Determine and run test strategy
 # ---------------------------------------------------------------
