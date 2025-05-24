@@ -128,8 +128,8 @@ else
 fi
 
 # 🕓 Wait for program to be indexed by validator before testing
-echo "⏳ Waiting for validator to recognize deployed program ID..."
-RETRIES=60
+echo "⏳ Waiting for up to 90s for validator to recognize deployed program ID..."
+RETRIES=90
 SLEEP=0.5
 for i in $(seq 1 $RETRIES); do
   if solana program show "$EMBEDDED_ID" > /dev/null 2>&1; then
