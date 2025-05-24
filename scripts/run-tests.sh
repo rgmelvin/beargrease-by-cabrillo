@@ -105,10 +105,7 @@ anchor build
 echo "📝 Updating Anchor.toml, lib.rs, and IDL metadata.address..."
 "$BEARGREASE_ROOT/scripts/update-program-id.sh"
 
-echo "🕒 Sleeping 10s to allow validator to begin indexing..."
-sleep 10
-
-# 📛 Determine program name again for confirmation step
+# 📛 Determine program name from Anchor.toml
 PROGRAM_NAME=$(grep -A1 '\[programs.localnet\]' "$ANCHOR_TOML_PATH" | grep -v '\[programs.localnet\]' | cut -d'=' -f1 | xargs)
 
 if [[ -z "$PROGRAM_NAME" ]]; then
@@ -125,24 +122,8 @@ if [[ -z "$EMBEDDED_ID" ]]; then
   exit 1
 else
   echo "📦 Confirmed: Rebuilt IDL contains program ID: $EMBEDDED_ID"
-fi
-
-# 🕓 Wait for program to be indexed by validator before testing
-echo "⏳ Waiting for up to 90s for validator to recognize deployed program ID..."
-RETRIES=90
-SLEEP=0.5
-for i in $(seq 1 $RETRIES); do
-  if solana program show "$EMBEDDED_ID" > /dev/null 2>&1; then
-    echo "✅ Validator recognizes program ID: $EMBEDDED_ID"
-    break
-  else
-    echo "⏳ Still waiting for validator to index program... ($i/$RETRIES)"
-    sleep $SLEEP
-  fi
-done
-
-if ! solana program show "$EMBEDDED_ID" > /dev/null 2>&1; then
-  echo "⚠️ WARNING: Validator did not confirm program indexing. Proceeding anyway..."
+  echo "⏳ Waiting for validator to recognize deployed program ID via simulation..."
+  node "$BEARGREASE_ROOT/scripts/wait-for-program.ts"
 fi
 
 # ---------------------------------------------------------------
