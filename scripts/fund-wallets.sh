@@ -27,6 +27,12 @@ if [ "$(echo "$BALANCE_SOL < $REQUIRED_BALANCE" | bc -l)" = "1" ]; then
     echo "🌉 Airdropping SOL to deploy wallet: $DEPLOY_PUBKEY (current: ${BALANCE_SOL} SOL)"
     solana airdrop 2 "$DEPLOY_PUBKEY" --url http://localhost:8899
 
+    if [ $? -ne 0 ]; then
+        echo "❌ Airdrop failed. RPC may not be ready or account may be invalid."
+        solana balance -k "$WALLET_PATH" --url http://localhost:8899 || echo "(Balance check failed)"
+        exit 1
+    fi
+
     # Wait for balance to reflect
     echo "⏳ Waiting for airdrop to finalize..."
     for i in {1..10}; do
