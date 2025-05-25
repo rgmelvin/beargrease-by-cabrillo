@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["ES2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "baseUrl": "."
+  },
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": true
+  },
+  "include": ["test-utils/**/*", "scripts/**/*"]
+}
