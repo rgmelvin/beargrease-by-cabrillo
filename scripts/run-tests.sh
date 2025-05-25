@@ -137,15 +137,8 @@ else
   echo "📦 Confirmed: Rebuilt IDL contains program ID: $EMBEDDED_ID"
   echo "⏳ Waiting for validator to recognize deployed program ID via simulation..."
 
-  echo "🐛 Calling: NODE_OPTIONS='--no-warnings' npx ts-node-esm $BEARGREASE_ROOT/scripts/wait-for-program.ts"
-  echo "🐛 File exists?"
-  ls -l "$BEARGREASE_ROOT/scripts/wait-for-program.ts" || echo "🚨 File not found"
-
-  echo "🐛 File head:"
-  head "$BEARGREASE_ROOT/scripts/wait-for-program.ts" || echo "🚨 Could not read file"
-
-  echo "🐛 Now executing..."
-  NODE_OPTIONS="--no-warnings" npx ts-node-esm "$BEARGREASE_ROOT/scripts/wait-for-program.ts" # NODE_OPTIONS supresses a deprecation warning that we will have to watch
+  echo "🐛 Calling wait-for-program.ts via Node register hook..."
+  node --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"))' --no-warnings "$BEARGREASE_ROOT/scripts/wait-for-program.ts"
 fi
 
 # ---------------------------------------------------------------
