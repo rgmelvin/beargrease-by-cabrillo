@@ -136,6 +136,15 @@ if [[ -z "$EMBEDDED_ID" ]]; then
 else
   echo "📦 Confirmed: Rebuilt IDL contains program ID: $EMBEDDED_ID"
   echo "⏳ Waiting for validator to recognize deployed program ID via simulation..."
+
+  echo "🐛 Calling: NODE_OPTIONS='--no-warnings' npx ts-node-esm $BEARGREASE_ROOT/scripts/wait-for-program.mts"
+  echo "🐛 File exists?"
+  ls -l "$BEARGREASE_ROOT/scripts/wait-for-program.mts || echo "🚨 File not found"
+
+  echo "🐛 File head:"
+  head "$BEARGREASE_ROOT/scripts/wait-for-program.mts" || echo "🚨 Could not read file"
+
+  echo "🐛 Now executing..."
   NODE_OPTIONS="--no-warnings" npx ts-node-esm "$BEARGREASE_ROOT/scripts/wait-for-program.mts" # NODE_OPTIONS supresses a deprecation warning that we will have to watch
 fi
 
