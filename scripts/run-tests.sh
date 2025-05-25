@@ -103,6 +103,11 @@ anchor build
 # NOT to devnet/mainnet or any other cluster configured in Anchor.toml.
 # ----------------------------------------------------------------------
 
+echo "🔎 Verifying deploy wallet before deployment..."
+echo "🔑 Wallet path: $ANCHOR_WALLET"
+echo "📬 Wallet pubkey: $(solana address -k "$ANCHOR_WALLET")"
+solana balance -k "$ANCHOR_WALLET"   --url http://localhost:8899
+
 echo "🚀 Deploying program to local validator"
 echo "🚀 Running: anchor deploy"
 anchor deploy
