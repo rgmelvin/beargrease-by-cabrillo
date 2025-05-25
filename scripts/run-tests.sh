@@ -139,7 +139,7 @@ else
 
   echo "🐛 Calling: NODE_OPTIONS='--no-warnings' npx ts-node-esm $BEARGREASE_ROOT/scripts/wait-for-program.mts"
   echo "🐛 File exists?"
-  ls -l "$BEARGREASE_ROOT/scripts/wait-for-program.mts || echo "🚨 File not found"
+  ls -l "$BEARGREASE_ROOT/scripts/wait-for-program.mts" || echo "🚨 File not found"
 
   echo "🐛 File head:"
   head "$BEARGREASE_ROOT/scripts/wait-for-program.mts" || echo "🚨 Could not read file"
