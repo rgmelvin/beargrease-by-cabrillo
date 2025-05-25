@@ -145,7 +145,7 @@ else
   head "$BEARGREASE_ROOT/scripts/wait-for-program.mts" || echo "🚨 Could not read file"
 
   echo "🐛 Now executing..."
-  NODE_OPTIONS="--no-warnings" npx ts-node-esm "$BEARGREASE_ROOT/scripts/wait-for-program.mts" # NODE_OPTIONS supresses a deprecation warning that we will have to watch
+  NODE_OPTIONS="--no-warnings" npx ts-node-esm "$BEARGREASE_ROOT/scripts/wait-for-program.ts" # NODE_OPTIONS supresses a deprecation warning that we will have to watch
 fi
 
 # ---------------------------------------------------------------

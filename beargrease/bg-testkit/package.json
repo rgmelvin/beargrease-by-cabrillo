@@ -1,0 +1,13 @@
+{
+    "name": "bg-testkit",
+    "version": "0.1.0",
+    "description": "Reusable test helpers for Solana Anchor projects using Beargrease",
+    "type": "module",
+    "main": "./src/loadProgram.mts",
+    "exports": {
+        ".": "./src/loadProgram.mts"
+    },
+    "keywords": ["solana", "anchor", "test", "beargrease"],
+    "author": "Cabrillo! Labs",
+    "license": "MIT"
+}
