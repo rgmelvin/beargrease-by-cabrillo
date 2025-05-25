@@ -42,19 +42,26 @@ echo "✅ Validator is healthy. Proceeding with tests..."
 # ----------------------------------------------------------------------
 cd "$PROJECT_ROOT"
 
+if [ -n "${CI:-}" ]; then
+  echo "👷 Detected CI mode (CI=true)"
+else 
+  echo "🧑‍💻 Running in local mode (CI not set)"
+fi
+
 if [ -z "${ANCHOR_WALLET:-}" ]; then
   if [ -f ".wallet/id.json" ] && [ ! -f ".wallet/_was_injected" ]; then
     export ANCHOR_WALLET="$PROJECT_ROOT/.wallet/id.json"
-    echo "💼 Using local wallet: $ANCHOR_WALLET"
+    echo "💼 Using local wallet copy at: $ANCHOR_WALLET"
   elif [ -f ".ledger/wallets/test-user.json" ]; then
     export ANCHOR_WALLET="$PROJECT_ROOT/.ledger/wallets/test-user.json"
-    echo "💼 Using local test wallet: $ANCHOR_WALLET"
+    echo "💼 Using .ledger test wallet: $ANCHOR_WALLET"
   else
-    echo "❌ No valid ANCHOR_WALLET found for local run"
+    echo "❌ No valid ANCHOR_WALLET found"
+    echo "📂 Checked: .wallet/id.json and .ledger/wallets/test-user.json"
     exit 1
   fi
 else
-  echo "💼 ANCHOR_WALLET is set to: $ANCHOR_WALLET"
+  echo "💼 ANCHOR_WALLET was already set to: $ANCHOR_WALLET"
 fi
 
 
