@@ -32,8 +32,8 @@ async function main() {
   // Retry simulation up to 90 times
   for (let i = 1; i <= 90; i++) {
     try {
-      // 🔧 Replace with actual method and accounts as needed
-      await program.methods.sayHello().accounts({}).simulate();
+      // MInimal no-op simulation to confirm validator indexing
+      await provider.connection.getProgramAccounts(program.programId);
       console.log(`✅ Program is ready after ${i} attempt(s).`);
       process.exit(0);
     } catch (err: any) {

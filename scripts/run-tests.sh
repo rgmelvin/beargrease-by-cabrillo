@@ -37,25 +37,26 @@ echo "✅ Validator is healthy. Proceeding with tests..."
 # Step 2.5: Decode CI Wallet secret before wallet selection.
 "$BEARGREASE_ROOT/scripts/init-wallet.sh"
 
-#----------------------------------------------------------------------
+##----------------------------------------------------------------------
 # Step 3A: Set ANCHOR_WALLET + PROVIDER_URL
 # ----------------------------------------------------------------------
 cd "$PROJECT_ROOT"
 
 if [ -z "${ANCHOR_WALLET:-}" ]; then
-  if [ -f ".wallet/id.json" ]; then
+  if [ -f ".wallet/id.json" ] && [ ! -f ".wallet/_was_injected" ]; then
     export ANCHOR_WALLET="$PROJECT_ROOT/.wallet/id.json"
-    echo "💼 Using injected or CI wallet: $ANCHOR_WALLET"
+    echo "💼 Using local wallet: $ANCHOR_WALLET"
   elif [ -f ".ledger/wallets/test-user.json" ]; then
     export ANCHOR_WALLET="$PROJECT_ROOT/.ledger/wallets/test-user.json"
     echo "💼 Using local test wallet: $ANCHOR_WALLET"
   else
-    echo "❌ No ANCHOR_WALLET set and no wallet found at .wallet/id.json or .ledger/wallets/test-user.json"
+    echo "❌ No valid ANCHOR_WALLET found for local run"
     exit 1
   fi
 else
   echo "💼 ANCHOR_WALLET is set to: $ANCHOR_WALLET"
 fi
+
 
 # Ensure Anchor.toml reflects the correct wallet
 ANCHOR_TOML_PATH="$PROJECT_ROOT/Anchor.toml"
