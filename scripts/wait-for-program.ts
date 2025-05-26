@@ -33,7 +33,7 @@ async function main() {
   for (let i = 1; i <= 90; i++) {
     try {
       // MInimal no-op simulation to confirm validator indexing
-      await provider.connection.getProgramAccounts(program.programId);
+      await program.methods.sayHello().simulate();
       console.log(`✅ Program is ready after ${i} attempt(s).`);
       process.exit(0);
     } catch (err: any) {

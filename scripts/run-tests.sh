@@ -137,6 +137,15 @@ else
   echo "📦 Confirmed: Rebuilt IDL contains program ID: $EMBEDDED_ID"
   echo "⏳ Waiting for validator to recognize deployed program ID via simulation..."
 
+  echo "🧪 === DIAGNOSTIC: IDL Program ID ==="
+  jq '.metadata.address' "$IDL_PATH" || echo "Could not read metadata.address from IDL"
+
+  echo "🧪 === DIAGNOSTIC: Static programId in test file? ==="
+  grep 'new Program' "$PROJECT_ROOT/tests/placebo.test.mts" || echo "✔ No static programId found (good)"
+
+  echo "🧪 === DIAGNOSTIC: Anchor.toml deploy entry ==="
+  grep "\[programs.localnet\]" -A 2 "$PROJECT_ROOT/Anchor.toml" || echo "⚠️ No deploy entry found"
+
   echo "🐛 Calling wait-for-program.ts via Node register hook..."
   node --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"))' --no-warnings "$BEARGREASE_ROOT/scripts/wait-for-program.ts"
 fi
