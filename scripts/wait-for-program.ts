@@ -29,26 +29,14 @@ async function main() {
   // Create program using Anchor v0.31.1-compatible constructor
   const program = new Program(idl as any, provider);
 
-  // 🪄 Kick the validator: send dummy tx to trigger block commitment
-  try {
-    const dummySig = await provider.sendAndConfirm(new Transaction());
-    console.log("🧪 Dummy transaction sent to prime validator:", dummySig);
-
-    // ⏳ Wait for block commitment to increase validator readiness
-    const latestBlockhash = await connection.getLatestBlockhash("finalized");
-    const confirmation = await connection.confirmTransaction(
-      {
-        blockhash: latestBlockhash.blockhash,
-        lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-        signature: dummySig,
-      },
-      "finalized"
-    );
-    console.log("🧪 Dummy transaction confirmed at slot:", confirmation.context.slot);
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : JSON.stringify(err);
-    console.warn("⚠️ Dummy transaction confirmation skipped (non-fatal):", msg);
-  }
+    // 🪄 Kick the validator: send dummy tx to trigger block commitment
+    try {
+      const dummySig = await provider.sendAndConfirm(new Transaction());
+      console.log("🧪 Dummy transaction sent to prime validator:", dummySig);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : JSON.stringify(err, null, 2);
+      console.warn("⚠️ Dummy transaction failed (non-fatal):", msg);
+    }
 
   // Retry simulation up to 90 times
   for (let i = 1; i <= 90; i++) {
