@@ -37,16 +37,22 @@ async function main() {
       console.log(`✅ Program is ready after ${i} attempt(s).`);
       process.exit(0);
     } catch (err: any) {
-      const msg = err?.message || JSON.stringify(err, null, 2);
       const logs = err?.logs || [];
-      if (msg.includes("Program does not exist")) {
-        console.log(`⏳ Attempt ${i}/90: Program not yet ready...`);
+      const msg = err?.message || JSON.stringify(err, null, 2);
+      const sim = err?.simulationResponse ?? {};
+      
+      if (
+        msg.includes("Program does not exist") ||
+        sim?.err === "ProgramAccountNotFound"
+      ) {
+        console.log(`⏳ Attempt ${i}/90: Program not yet ready (not indexed)...`);
         await new Promise((r) => setTimeout(r, 1000));
       } else {
         console.error("❌ Unexpected simulation error:", msg);
         if (logs.length > 0) {
-          console.error("🔍 Simmulation logs:\n", logs.join("\n"));
+          console.error("🔍 Simulation logs:\n", logs.join("\n"));
         }
+        console.error("📦 Raw simulation response:", JSON.stringify(sim, null, 2));
         process.exit(1);
       }
     }
