@@ -1,7 +1,6 @@
 import { AnchorProvider, Program, setProvider } from "@coral-xyz/anchor";
-import { PublicKey, Keypair } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { readFileSync } from "fs";
-import * as anchor from "@coral-xyz/anchor";
 import path from "path";
 
 // ⛑️ 1. Read program ID from Anchor.toml
@@ -35,7 +34,7 @@ async function waitForExecutionReadiness(program: Program): Promise<void> {
         console.log(`⚠️  Log not yet found. Retrying in ${DELAY_MS / 1000}s...`);
       }
     } catch (err) {
-      console.log(`⚠️  Transaction failed (attempt ${attempt}): ${err.message}`);
+      console.log(`⚠️  Transaction failed (attempt ${attempt}): ${(err as Error).message}`);
     }
 
     await new Promise((r) => setTimeout(r, DELAY_MS));
@@ -44,15 +43,13 @@ async function waitForExecutionReadiness(program: Program): Promise<void> {
   throw new Error(`❌ Failed to detect expected program log after ${MAX_ATTEMPTS} attempts`);
 }
 
-// 🚀 3. Main
-(async () => {
+// 🚀 3. Main with safe top-level error handling
+(async function main() {
   try {
     const programId = getProgramId();
     const idl = JSON.parse(readFileSync(path.resolve("target/idl/placebo.json"), "utf8"));
-
     const provider = AnchorProvider.env();
     setProvider(provider);
-
     const program = new Program(idl, provider);
 
     console.log("🧪 Probing validator for execution readiness using say_hello...");
@@ -60,13 +57,12 @@ async function waitForExecutionReadiness(program: Program): Promise<void> {
   } catch (err) {
     console.error("❌ Unhandled error in wait-for-program.ts");
 
-    if (err instance of Error) {
+    if (err instanceof Error) {
       console.error(err.stack);
     } else {
       console.error("Thrown value is not an Error instance:", JSON.stringify(err, null, 2));
     }
-    
-    console.error(err);
+
     process.exit(1);
   }
 })();
