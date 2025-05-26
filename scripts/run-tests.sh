@@ -115,6 +115,9 @@ anchor deploy
 echo "🔁 Rebuilding after deploy to ensure fresh IDL output..."
 anchor build
 
+echo "🕓 Waiting 10s to allow validator to fully load deployed program..."
+sleep 10
+
 echo "📝 Updating Anchor.toml, lib.rs, and IDL metadata.address..."
 "$BEARGREASE_ROOT/scripts/update-program-id.sh"
 
