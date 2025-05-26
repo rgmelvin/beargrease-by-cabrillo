@@ -1,6 +1,6 @@
 // scripts/wait-for-program.ts
 import { AnchorProvider, Program, Wallet, setProvider } from "@coral-xyz/anchor";
-import { Connection, Keypair, Transaction } from "@solana/web3.js";
+import { Connection, Keypair } from "@solana/web3.js";
 import fs from "fs";
 import path from "path";
 
@@ -29,39 +29,19 @@ async function main() {
   // Create program using Anchor v0.31.1-compatible constructor
   const program = new Program(idl as any, provider);
 
-    // 🪄 Kick the validator: send dummy tx to trigger block commitment
-    try {
-      const dummySig = await provider.sendAndConfirm(new Transaction());
-      console.log("🧪 Dummy transaction sent to prime validator:", dummySig);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : JSON.stringify(err, null, 2);
-      console.warn("⚠️ Dummy transaction failed (non-fatal):", msg);
-    }
-
   // Retry simulation up to 90 times
   for (let i = 1; i <= 90; i++) {
     try {
       // MInimal no-op simulation to confirm validator indexing
       await program.methods.sayHello().simulate();
       console.log(`✅ Program is ready after ${i} attempt(s).`);
-      process.exit(0);
+      return;
     } catch (err: any) {
-      const logs = err?.logs || [];
-      const msg = err?.message || JSON.stringify(err, null, 2);
-      const sim = err?.simulationResponse ?? {};
-      
-      if (
-        msg.includes("Program does not exist") ||
-        sim?.err === "ProgramAccountNotFound"
-      ) {
-        console.log(`⏳ Attempt ${i}/90: Program not yet ready (not indexed)...`);
+      if (err.message?.includes("Program does not exist")) {
+        console.log(`⏳ Attempt ${i}/90: Program not yet ready...`);
         await new Promise((r) => setTimeout(r, 1000));
       } else {
-        console.error("❌ Unexpected simulation error:", msg);
-        if (logs.length > 0) {
-          console.error("🔍 Simulation logs:\n", logs.join("\n"));
-        }
-        console.error("📦 Raw simulation response:", JSON.stringify(sim, null, 2));
+        console.error("❌ Unexpected simulation error:", err.message);
         process.exit(1);
       }
     }
