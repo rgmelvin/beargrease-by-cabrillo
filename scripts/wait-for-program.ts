@@ -1,6 +1,6 @@
 // scripts/wait-for-program.ts
 import { AnchorProvider, Program, Wallet, setProvider } from "@coral-xyz/anchor";
-import { Connection, Keypair } from "@solana/web3.js";
+import { Connection, Keypair, Transaction } from "@solana/web3.js";
 import fs from "fs";
 import path from "path";
 
@@ -28,6 +28,15 @@ async function main() {
 
   // Create program using Anchor v0.31.1-compatible constructor
   const program = new Program(idl as any, provider);
+
+  // 🪄 Kick the validator: send dummy tx to trigger block commitment
+  try {
+    const dummySig = await provider.sendAndConfirm(new Transaction());
+    console.log("🧪 Dummy transaction sent to prime validator:", dummySig);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : JSON.stringify(err, null,2);
+    console.warn("⚠️ Dummy transaction failed (non-fatal):", message);
+  }
 
   // Retry simulation up to 90 times
   for (let i = 1; i <= 90; i++) {
