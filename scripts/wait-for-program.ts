@@ -46,14 +46,20 @@ async function waitForExecutionReadiness(program: Program): Promise<void> {
 
 // 🚀 3. Main
 (async () => {
-  const programId = getProgramId();
-  const idl = JSON.parse(readFileSync(path.resolve("target/idl/placebo.json"), "utf8"));
+  try {
+    const programId = getProgramId();
+    const idl = JSON.parse(readFileSync(path.resolve("target/idl/placebo.json"), "utf8"));
 
-  const provider = AnchorProvider.env();
-  setProvider(provider);
+    const provider = AnchorProvider.env();
+    setProvider(provider);
 
-  const program = new Program(idl, provider);
+    const program = new Program(idl, provider);
 
-  console.log("🧪 Probing validator for execution readiness using say_hello...");
-  await waitForExecutionReadiness(program);
+    console.log("🧪 Probing validator for execution readiness using say_hello...");
+    await waitForExecutionReadiness(program);
+  } catch (err) {
+    console.error("❌ Unhandled error in wait-for-program.ts");
+    console.error(err);
+    process.exit(1);
+  }
 })();
