@@ -59,6 +59,13 @@ async function waitForExecutionReadiness(program: Program): Promise<void> {
     await waitForExecutionReadiness(program);
   } catch (err) {
     console.error("❌ Unhandled error in wait-for-program.ts");
+
+    if (err instance of Error) {
+      console.error(err.stack);
+    } else {
+      console.error("Thrown value is not an Error instance:", JSON.stringify(err, null, 2));
+    }
+    
     console.error(err);
     process.exit(1);
   }
