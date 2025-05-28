@@ -17,6 +17,7 @@ async function waitForExecutionReadiness(program: Program): Promise<void> {
   const DELAY_MS = 3000;
   const EXPECTED_LOG = "Program log: 👋 Hello from Placebo!";
 
+  // We are using AnchorProvider.env(), so sendAndConfirm is guaranteed to be present
   const provider = program.provider as Required<typeof program.provider>;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
