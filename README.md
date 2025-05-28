@@ -117,43 +117,51 @@ This automatically:
 
 ---
 
-## ✅ Using Beargrease as a GitHub Action
+## Using Beargrease as a GitHub Action
 
 You can also use Beargrease in your GitHub CI workflows:
 
 ### 1. **Add to your workflow**
 
 ```
-- name: 🐻 Run Beargrease
-  uses: rgmelvin/beargrease-by-cabrillo@v1
+yamlCopyEdit- name: 🐻 Run Beargrease
+  uses: rgmelvin/beargrease@v1
+  env:
+    BEARGREASE_WALLET_SECRET: ${{ secrets.BEARGREASE_WALLET_SECRET }}
   with:
-    wallet-secret: ${{ secrets.TEST_USER_KEYPAIR }}
+    test-runner: auto # or "anchor" or "yarn"
 ```
 
 This invokes Beargrease as a GitHub Action. It starts a Dockerized Solana validator, deploys your Anchor program, runs your tests, and shuts down — exactly as it would when used locally.
 
 ### 2. **Define the required secret**
 
-You must define a GitHub secret called `TEST_USER_KEYPAIR` in your repository.
- It should contain a **JSON array** (your test wallet keypair) like this:
+You must define a GitHub secret called `BEARGREASE_WALLET_SECRET` in your repository.
+ This secret must contain a **Base64-encoded Solana keypair**.
+
+#### 🔐 To generate and encode the keypair:
 
 ```
-[213,12,99,42, ...]
+bashCopyEdit# 1. Create a new Solana keypair locally:
+solana-keygen new --no-bip39-passphrase --outfile temp-wallet.json
+
+# 2. Encode the file to Base64 (Linux/GNU):
+base64 -w 0 temp-wallet.json > encoded.txt
+
+# macOS alternative (no -w flag):
+base64 temp-wallet.json | tr -d '\n' > encoded.txt
 ```
 
-This secret will be written to `.ledger/wallets/test-user.json` inside the GitHub Actions runner.
+#### 📋 Paste the entire contents of `encoded.txt` as your GitHub secret:
 
-To generate a wallet locally:
+- Secret name: `BEARGREASE_WALLET_SECRET`
+- Secret value: (one long base64 string, no line breaks)
 
-```
-solana-keygen new --no-bip39-passphrase --outfile .ledger/wallets/test-user.json
-cat .ledger/wallets/test-user.json
-```
-
-Copy the output and paste it as the `TEST_USER_KEYPAIR` secret in your repository settings.
+The Beargrease test harness will automatically decode this secret into a wallet file at `/wallet/id.json` inside the container.
 
 ---
 
+```
 ## 🛠️ Scripts
 
 | Script                  | Description |
