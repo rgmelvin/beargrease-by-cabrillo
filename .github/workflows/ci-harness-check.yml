@@ -1,0 +1,71 @@
+# ------------------------------------------------------------
+# 🧪 Beargrease CI Harness Check
+#
+# This workflow verifies that Beargrease functions as a complete
+# Solana Anchor test harness by running it against a real Anchor
+# program (e.g., Placebo). It does *not* test Beargrease itself
+# as a smart contract — Beargrease is the test *orchestrator*.
+#
+# Goal: Prove Beargrease can be used to CI-test Anchor programs
+# from external repos via GitHub Actions or local invocation.
+#
+# Future Goal: Encapsulate Beargrease as a full reusable GitHub
+# Action callable via `uses:` in downstream projects.
+# ------------------------------------------------------------
+
+name: 🧪 CI Harness Check
+
+on:
+  push:
+    branches: [ci-dev]
+  workflow_dispatch:
+
+jobs:
+  verify-beargrease-functionality:
+    name: 🔧 Verify Beargrease on Anchor test target (Placebo)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Beargrease
+        uses: actions/checkout@v4
+        with:
+          path: beargrease
+
+      - name: 📥 Checkout Placebo test target
+        uses: actions/checkout@v4
+        with:
+          repository: rgmelvin/placebo
+          path: placebo
+
+      - name: 🧰 Set up Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: 💾 Cache Cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: 💾 Cache Cargo git repos
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: ⚓ Install Solana CLI (Anza recommended)
+        run: |
+          sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
+          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+
+      - name: 🚀 Install Anchor CLI
+        run: |
+          npm install -g @coral-xyz/anchor-cli
+          anchor --version
+
+      - name: 🔧 Run Beargrease from Placebo
+        run: |
+          cd placebo
+          ../beargrease/scripts/run-tests.sh

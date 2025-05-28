@@ -1,4 +1,6 @@
-# Beargrease v1.0.0
+# Beargrease v1.0.0 🐻
+
+![CI Harness Check](https://github.com/rgmelvin/beargrease/actions/workflows/ci-harness-check.yml/badge.svg?branch=ci-dev)
 
 [![Beargrease Tests](https://github.com/rgmelvin/beargrease-by-cabrillo/workflows/ci.yml/badge.svg)](https://github.com/rgmelvin/beargrease-by-cabrillo/actions/workflows/ci.yml)
 
@@ -13,6 +15,33 @@ A transparent, script-driven Solana Anchor test harness using Docker.
 Beargrease was developed out of frustration with brittle, opaque, or overly complex test setups in Solana development. It solves real pain points encountered during professional-grade smart contract development and abstracts them into a reliable, reproducible, Docker-driven workflow.
 
 It is not a toy. It is the infrastructure I built when existing tooling wasn’t enough — and I’ve spent the time to make it usable by others.
+
+---
+
+## 🔧 Harness Self-Test (Using Placebo)
+
+Beargrease is a transparent, containerized CI test harness for Solana Anchor programs. To demonstrate that Beargrease works as intended, it includes a real-world self-test workflow.
+
+This test does **not** run tests *on* Beargrease — it runs tests *through* Beargrease.
+
+Specifically:
+
+- The Beargrease workflow launches a full Solana test validator inside Docker.
+- It then builds and deploys a real Anchor program (`placebo`), living outside the Beargrease repository.
+- Beargrease automatically patches the deployed program ID into `Anchor.toml` and `lib.rs`.
+- It waits for the validator to index the program.
+- Finally, it runs a Mocha test suite using TypeScript ESM and `ts-node`, asserting that the program behaves correctly.
+
+This entire sequence is executed **from within the Beargrease repo** using only its scripts and CI configuration. It validates that Beargrease can:
+
+- Build and deploy any Solana Anchor program
+- Replace dynamic program IDs
+- Run ESM-based Mocha tests cleanly in CI
+- Clean up and exit without hanging
+
+### ✅ View Live Results
+
+[![CI Harness Check](https://github.com/rgmelvin/beargrease/actions/workflows/ci-harness-check.yml/badge.svg?branch=ci-dev)](https://github.com/rgmelvin/beargrease/actions/workflows/ci-harness-check.yml)
 
 ---
 
