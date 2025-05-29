@@ -13,8 +13,8 @@ function getProgramId(): PublicKey {
 
 // 🧪 Retry sending say_hello until expected log appears
 async function waitForExecutionReadiness(program: Program): Promise<void> {
-  const MAX_ATTEMPTS = 20;
-  const DELAY_MS = 3000;
+  const MAX_ATTEMPTS = 30;
+  const DELAY_MS = 4000;
   const EXPECTED_LOG = "Program log: 👋 Hello from Placebo!";
 
   // We are using AnchorProvider.env(), so sendAndConfirm is guaranteed to be present
