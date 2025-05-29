@@ -260,6 +260,19 @@ Want to contribute? Fork and go wild 🛠️
 
 ---
 
+🔐 Security Notice
+Beargrease is a test harness for local and CI-based Solana smart contract development. While it is designed for safe use in development environments, it generates and handles private keypairs. These are stored in plaintext files under .ledger/wallets/ (local mode) or injected from environment variables (CI mode).
+
+Never use Beargrease with production wallets or mainnet deployments.
+
+Treat all test wallets as sensitive data and avoid committing them to version control.
+
+In CI, always use ephemeral keys injected via GitHub Secrets.
+
+If you suspect a security issue or vulnerability in Beargrease, please report it to Cabrillo! Labs at cabriolloweb3@gmail.com
+
+---
+
 ## 🛡️ Attribution
 
 This project was created and maintained by Richard G. Melvin, founder of Cabrillo!, Labs.
