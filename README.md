@@ -242,7 +242,7 @@ flowchart TB
 If you get stuck, consult:
 
 - **Appendices** in either beginner guide
-- The visual [flowchart troubleshooting key](./docs/troubleshooting-mermaid.md)
+- The visual [Troubleshooting and Common Errors](docs/BeginnerGuide-CI.md#section-12-appendix--troubleshooting-and-common-errors)
 - Reach out: **cabrilloweb3@gmail.com**
 
 ---
