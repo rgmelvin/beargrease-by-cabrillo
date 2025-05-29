@@ -1,202 +1,262 @@
-# Beargrease v1.0.0 🐻
+# 🐻 Beargrease: Solana Test Harness
 
-![CI Harness Check](https://github.com/rgmelvin/beargrease/actions/workflows/ci-harness-check.yml/badge.svg?branch=ci-dev)
-
-[![Beargrease Tests](https://github.com/rgmelvin/beargrease-by-cabrillo/workflows/ci.yml/badge.svg)](https://github.com/rgmelvin/beargrease-by-cabrillo/actions/workflows/ci.yml)
-
-A transparent, script-driven Solana Anchor test harness using Docker.
-
-**Beargrease** makes it simple to spin up a local Solana validator, fund isolated test wallets, deploy Anchor programs, and run tests — all in a clean, reproducible Docker container.
+**Version:** v1.1.0  
+**Maintained by:** Cabrillo! Labs  
+**Contact:** cabrilloweb3@gmail.com  
+**License:** MIT  
+**GitHub:** [github.com/rgmelvin/beargrease-by-cabrillo](https://github.com/rgmelvin/beargrease-by-cabrillo)
 
 ---
 
-## 🧠 Why Beargrease Exists
-
-Beargrease was developed out of frustration with brittle, opaque, or overly complex test setups in Solana development. It solves real pain points encountered during professional-grade smart contract development and abstracts them into a reliable, reproducible, Docker-driven workflow.
-
-It is not a toy. It is the infrastructure I built when existing tooling wasn’t enough — and I’ve spent the time to make it usable by others.
-
----
-
-## 🔧 Harness Self-Test (Using Placebo)
-
-Beargrease is a transparent, containerized CI test harness for Solana Anchor programs. To demonstrate that Beargrease works as intended, it includes a real-world self-test workflow.
-
-This test does **not** run tests *on* Beargrease — it runs tests *through* Beargrease.
-
-Specifically:
-
-- The Beargrease workflow launches a full Solana test validator inside Docker.
-- It then builds and deploys a real Anchor program (`placebo`), living outside the Beargrease repository.
-- Beargrease automatically patches the deployed program ID into `Anchor.toml` and `lib.rs`.
-- It waits for the validator to index the program.
-- Finally, it runs a Mocha test suite using TypeScript ESM and `ts-node`, asserting that the program behaves correctly.
-
-This entire sequence is executed **from within the Beargrease repo** using only its scripts and CI configuration. It validates that Beargrease can:
-
-- Build and deploy any Solana Anchor program
-- Replace dynamic program IDs
-- Run ESM-based Mocha tests cleanly in CI
-- Clean up and exit without hanging
-
-### ✅ View Live Results
-
-[![CI Harness Check](https://github.com/rgmelvin/beargrease/actions/workflows/ci-harness-check.yml/badge.svg?branch=ci-dev)](https://github.com/rgmelvin/beargrease/actions/workflows/ci-harness-check.yml)
+> ⚠️ **Notice: Two Modes of Use**
+>
+> Beargrease supports two modes of operation:
+>
+> - **Local Mode** (for running tests manually on your development machine)
+> - **Directory Checkout CI Mode** (for running tests automatically in GitHub Actions)
+>
+> 📘 Use the correct guide for your workflow:
+>
+> - 👉 [Beginner’s Guide for Local Mode (v1.0.x)](./docs/BeginnerGuide.md)
+>
+> - 👉 [Beginner’s Guide for Directory Checkout Mode for CI (v1.1.0)](./docs/BeginnerGuide-CI.md)
+>
+>   
 
 ---
 
-## 🧭 Overview
+## 📦 What’s in This Repository
 
-Beargrease is designed for developers who want a clean, zero-conflict environment for testing Solana smart contracts. By wrapping `solana-test-validator` in a Docker container with carefully sequenced scripts, Beargrease:
+Beargrease is a developer-focused harness for Solana test automation, featuring:
 
-- Avoids conflicts with local Solana CLI or wallet config
-- Funds dedicated test wallets with localnet SOL
-- Automatically builds and deploys your Anchor programs
-- Runs your test suite using a standard `mocha` runner
-- Provides readable logs and clear errors for debugging
+- A suite of bash scripts and TypeScript helpers for Solana validator management
+- CI-compatible test runner using GitHub Actions and Docker
+- Manual local test mode with copy-paste integration into Anchor projects
+- Modular structure to enable reuse across multiple projects
 
----
+## 🧭 What is Beargrease?
 
-## 🧩 System Flow Diagram
+Beargrease is a transparent, script-driven test harness for Solana Anchor programs. It helps you:
 
-```mermaid
-flowchart TD
-    A["Start: run-tests.sh"] --> B["Start Docker Validator"]
-    B --> C["Wait for Validator to Become Healthy"]
-    C --> D["Create or Load Test Wallets"]
-    D --> E["Airdrop SOL to Wallets"]
-    E --> F["Build Anchor Program"]
-    F --> G["Deploy Program to Localnet"]
-    G --> H["Update Anchor.toml and lib.rs"]
-    H --> I["Run Mocha or Anchor Tests"]
-    I --> J["Output Results & Exit"]
-```
+- Spin up a local `solana-test-validator` container.
+- Airdrop and fund test wallets.
+- Deploy and index your program.
+- Run Mocha/Anchor-based TypeScript or JavaScript tests.
+- Automatically clean up the environment after tests complete.
 
-This diagram shows the linear, script-driven flow Beargrease executes when you run `run-tests.sh`. All steps are transparent and customizable.
+Beargrease was created to address the persistent fragility of local validator setups in Solana CI, making developer test environments reliable, repeatable, and visible.
 
 ---
 
-## 📁 Directory Structure
+## 📦 Features
 
-```
-beargrease/
-├── Dockerfile
-├── docker-compose.yml
-├── scripts/
-│   ├── airdrop.sh
-│   ├── create-test-wallet.sh
-│   ├── fund-wallets.sh
-│   ├── run-tests.sh
-│   ├── update-program-id.sh
-│   ├── version.sh
-│   └── wait-for-validator.sh
-├── .gitignore
-├── .dockerignore
-├── README.md
-└── docs/
-    ├── BeginnerGuide.md
-    └── DockerInstall.md
-```
+- ✅ Script-based validator launch and teardown
+- ✅ Auto program deployment and ID patching
+- ✅ Local and CI compatibility
+- ✅ Supports Anchor v0.31.1+ and Mocha ESM test runners
+- ✅ Beginner-friendly documentation with visual guides
 
 ---
 
-## 🚀 Quick Start
+## 🧪 Modes of Use
 
-Run this from your Anchor project folder:
+| Mode                 | Description                                               | Use When...                                           |
+| -------------------- | --------------------------------------------------------- | ----------------------------------------------------- |
+| 🖥️ Local Mode         | Runs on your machine, using Docker and shell scripts      | You want to manually test programs during development |
+| ⚙️ Directory Checkout | Clones Beargrease into your CI project and runs in GitHub | You want your test suite to run in CI automatically   |
+
+📘 Each mode has a dedicated guide:
+
+- Local Mode: [`BeginnerGuide.md`](./docs/BeginnerGuide.md)
+- CI Mode: [`BeginnerGuide-CI.md`](./docs/BeginnerGuide-CI.md)
+
+---
+
+## ⚙️ Beargrease Architecture and Script Roles
+
+Beargrease works by orchestrating:
+- 🐳 A Docker-based local Solana test validator
+- 🧪 Dynamic wallet creation and funding
+- 📜 Program ID updates in `Anchor.toml` and `lib.rs`
+- 🧬 ESM-compatible TypeScript test execution
+
+| Script                  | Purpose                           |
+| ----------------------- | --------------------------------- |
+| `start-validator.sh`    | Launches the Docker validator     |
+| `wait-for-validator.sh` | Waits until validator is healthy  |
+| `create-test-wallet.sh` | Generates and saves test wallet   |
+| `airdrop.sh`            | Airdrops SOL to a wallet          |
+| `fund-wallets.sh`       | Batch funds multiple wallets      |
+| `update-program-id.sh`  | Replaces the deployed program ID  |
+| `run-tests.sh`          | Entry point for running all steps |
+| `version.sh`            | Echoes Beargrease version         |
+
+---
+
+## 🧰 How to Use Beargrease Locally (v1.0.x)
+
+Use the [Beginner’s Guide for Local Mode](./docs/BeginnerGuide.md) to:
+
+- Copy the Beargrease `scripts/` directory into your Anchor project
+- Run tests using the local Docker validator
+- Airdrop and fund test accounts
+- Debug program interactions locally
+
+---
+
+## 🧪 How to Use Beargrease in GitHub CI (v1.1.0+)
+
+Use the [Beginner’s Guide to Directory Checkout Mode for CI](./docs/BeginnerGuide-CI.md) to:
+
+- Clone Beargrease alongside your project in `.github/workflows`
+- Create and use a base64-encoded wallet secret
+- Auto-inject validator, wallet, and IDL setup before tests
+- Run full integration tests in CI with no local setup
+
+---
+
+## 🧭 How to Choose Between Modes
+
+| Mode       | Use When...                                       |
+| ---------- | ------------------------------------------------- |
+| Local Mode | You're developing or debugging manually           |
+| CI Mode    | You need automated test runs on GitHub pushes/PRs |
+
+---
+
+## 📚 Documentation & Guides
+
+- [Beginner’s Guide for Local Mode](./docs/BeginnerGuide.md)
+- [Beginner’s Guide for GitHub CI](./docs/BeginnerGuide-CI.md)
+
+---
+
+## **Beargrease Dual-Mode Cheat Sheet**
+
+> Quick reference for running Beargrease in **Local Mode** or **CI Mode**
+>  💡 Remember: Local Mode copies Beargrease into your project. CI Mode checks it out dynamically.
+
+------
+
+### 🐻 Local Mode (Manual Developer Workflow)
+
+**Setup**
 
 ```bash
-../beargrease/scripts/run-tests.sh
+# From your project root
+mkdir -p scripts
+cp -r ../beargrease-by-cabrillo/scripts ./scripts/beargrease
+chmod +x ./scripts/beargrease/*.sh
 ```
 
-This automatically:
-- Builds and launches the Docker validator
-- Waits until the RPC is healthy
-- Builds and deploys your Anchor program
-- Airdrops SOL to your test wallet(s)
-- Runs your Mocha tests
+**Run Test Suite**
+
+```bash
+./scripts/beargrease/run-tests.sh
+```
+
+**Test Wallets**
+
+```bash
+# Create
+./scripts/beargrease/create-test-wallet.sh
+# Airdrop
+./scripts/beargrease/airdrop.sh test-user
+```
+
+**Update Program ID**
+
+```bash
+./scripts/beargrease/update-program-id.sh
+```
+
+------
+
+### 🧪 GitHub CI Mode (Directory Checkout v1.1.0)
+
+**`.github/workflows/test.yml`**
+
+```yaml
+jobs:
+  test:
+    steps:
+      - name: 📥 Checkout project
+        uses: actions/checkout@v4
+
+      - name: 🐻 Checkout Beargrease
+        uses: actions/checkout@v4
+        with:
+          repository: rgmelvin/beargrease-by-cabrillo
+          path: beargrease
+
+      - name: 🚀 Run Tests
+        run: ./beargrease/scripts/run-tests.sh
+        env:
+          BEARGREASE_WALLET_SECRET: ${{ secrets.WALLET_SECRET }}
+```
+
+**Add CI secret:**
+
+- Go to **GitHub > Settings > Secrets > Actions**
+- Add secret named `WALLET_SECRET` with base64-encoded Solana keypair JSON
+
+**CI Logs**
+
+- Will show validator health, airdrops, and test execution
+- Automatically injects program ID
+
+------
+
+## Beargrease Dual-Mode Flow Diagrams
+
+### 🐻 **Local Mode Flow (v1.0.x)**
+
+```mermaid
+flowchart TB
+    A1[📂 Copy Beargrease scripts into your project] --> 
+    A2[🚀 Run ./scripts/beargrease/run-tests.sh] --> 
+    A3[🐳 Start solana-test-validator via Docker] --> 
+    A4[🕓 Wait for validator to pass healthcheck] --> 
+    A5[🧪 Run Anchor tests using local wallet] --> 
+    A6[🛑 Stop validator container]
+```
+
+
+
+### 🐻 ** CI Mode Flow (v1.1.0 Directory Checkout Mode)**
+
+```mermaid
+flowchart TB
+    B1[📥 Checkout your project repo] --> 
+    B2[📥 Checkout Beargrease repo in a subdirectory] --> 
+    B3[🚀 Run ./beargrease/scripts/run-tests.sh] --> 
+    B4[🐳 Start solana-test-validator via Docker] --> 
+    B5[🔐 Decode BEARGREASE_WALLET_SECRET into container] --> 
+    B6[📌 Inject deployed Program ID into Anchor.toml] --> 
+    B7[🧪 Run Anchor tests inside GitHub Actions] --> 
+    B8[🛑 Stop validator container]
+```
+
+## 🐞 Troubleshooting and Support
+
+If you get stuck, consult:
+
+- **Appendices** in either beginner guide
+- The visual [flowchart troubleshooting key](./docs/troubleshooting-mermaid.md)
+- Reach out: **cabrilloweb3@gmail.com**
 
 ---
 
-## Using Beargrease as a GitHub Action
+## 👩‍🔬 For Developers: Extending Beargrease
 
-You can also use Beargrease in your GitHub CI workflows:
+Beargrease was built for modularity and future-proofing:
 
-### 1. **Add to your workflow**
+- ESM-friendly test execution
+- Pluggable validator config
+- Versioned CLI compatibility
+- `bg-testkit/` stub available for extending CI logic
 
-```
-yamlCopyEdit- name: 🐻 Run Beargrease
-  uses: rgmelvin/beargrease@v1
-  env:
-    BEARGREASE_WALLET_SECRET: ${{ secrets.BEARGREASE_WALLET_SECRET }}
-  with:
-    test-runner: auto # or "anchor" or "yarn"
-```
-
-This invokes Beargrease as a GitHub Action. It starts a Dockerized Solana validator, deploys your Anchor program, runs your tests, and shuts down — exactly as it would when used locally.
-
-### 2. **Define the required secret**
-
-You must define a GitHub secret called `BEARGREASE_WALLET_SECRET` in your repository.
- This secret must contain a **Base64-encoded Solana keypair**.
-
-#### 🔐 To generate and encode the keypair:
-
-```
-bashCopyEdit# 1. Create a new Solana keypair locally:
-solana-keygen new --no-bip39-passphrase --outfile temp-wallet.json
-
-# 2. Encode the file to Base64 (Linux/GNU):
-base64 -w 0 temp-wallet.json > encoded.txt
-
-# macOS alternative (no -w flag):
-base64 temp-wallet.json | tr -d '\n' > encoded.txt
-```
-
-#### 📋 Paste the entire contents of `encoded.txt` as your GitHub secret:
-
-- Secret name: `BEARGREASE_WALLET_SECRET`
-- Secret value: (one long base64 string, no line breaks)
-
-The Beargrease test harness will automatically decode this secret into a wallet file at `/wallet/id.json` inside the container.
-
----
-
-```
-## 🛠️ Scripts
-
-| Script                  | Description |
-|------------------------|-------------|
-| `create-test-wallet.sh`| Generates and saves new local test wallets in `.ledger/wallets/` |
-| `airdrop.sh`           | Interactive, container aware airdrop script for funding test wallets - trims input, validates amount, guides the user |
-| `fund-wallets.sh`      | Funds multiple test wallets with localnet SOL |
-| `wait-for-validator.sh`| Blocks until the validator’s RPC endpoint is healthy |
-| `update-program-id.sh` | Replaces `lib.rs` and `Anchor.toml` program ID after deployment |
-| `run-tests.sh`         | Orchestrates full test flow from Docker boot to test execution |
-| `version.sh`           | Prints the Solana version used inside the container |
-
----
-
-## 🐳 Docker Details
-
-Beargrease wraps the Solana test validator in a lightweight container using this base image:
-
-```dockerfile
-solanalabs/solana:latest
-```
-
-**Ports exposed:**
-- `8899` – RPC (used by Anchor)
-- `8900` – Gossip
-- `8001` – Faucet
-
-No Solana CLI or Anchor CLI installation is required on the host — everything runs inside Docker.
-
----
-
-## 📚 Documentation
-
-- 📘 [Beginner Guide](./docs/BeginnerGuide.md) – Full walk-through of setup and usage
-- 🔧 [Docker Install Guide](./docs/DockerInstall.md) – For Linux, macOS, WSL
+Want to contribute? Fork and go wild 🛠️
 
 ---
 
@@ -206,25 +266,23 @@ This project was created and maintained by Richard G. Melvin, founder of Cabrill
 
 If you use Beargrease in your own work, please credit the project by linking back to this repository and mentioning Cabrillo!, Labs.
 
-See [LICENSE](./LICENSE) for terms.
+See [LICENSE](https://github.com/rgmelvin/beargrease-by-cabrillo/blob/main/LICENSE) for terms.
 
----
+------
 
 ## 🐻 Why “Beargrease”?
 
-Named after the legendary John Beargrease, the North Shore mail carrier who braved the harshest winters to deliver with reliability. This tool does the same for your Solana test pipeline.
+Named after the legendary John Beargrease, the Native American mail carrier who braved the harshest winters along the North Shore of Lake Superior to deliver with reliability. This tool does the same for your Solana test pipeline.
 
----
+------
 
 ## 🧬 About the Author
 
-I'm Richard G. Melvin, founder and sole developer at Cabrillo!, Labs. I hold a Ph.D. in Biochemistry and Molecular Genetics, and I'm self-taught in systems programming, smart contracts, and the broader world of decentralized infrastructure.
+I'm Richard (Rich) G. Melvin, founder and sole developer at Cabrillo!, Labs. I hold a Ph.D. in Biochemistry and Molecular Genetics from the University of New South Wales, and I'm self-taught in systems programming, smart contracts, and the broader world of decentralized infrastructure.
 
 Beargrease is part of my ongoing effort to build reliable, decentralized mechanisms that give scientists and independent researchers ownership over their work—and to help more people and businesses engage meaningfully with Web3.
 
----
+## 🧾 License
 
-## 📜 License
-
-MIT © Cabrillo!, Labs  
-📫 cabrilloweb3@gmail.com
+MIT License  
+© 2025 Cabrillo! Labs

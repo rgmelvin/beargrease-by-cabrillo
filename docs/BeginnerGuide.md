@@ -1,5 +1,17 @@
-Beargrease Beginner Guide
+Beargrease Beginner Guide (Local Mode v1.0 - v1.1)
 =================================
+
+> ⚠️ **Notice: Two Modes of Use**
+>
+> This guide describes **Local Mode (v1.0.x–v1.1.x)** of Beargrease. In this mode, you manually copy Beargrease scripts into your test project (e.g., *placebo*) and > run them locally using Bash.
+>
+>
+> If you are using Beargrease for **GitHub CI**, please refer instead to the new companion document:
+>
+> 👉 **[Beginner’s Guide to v1.1.0 Directory Checkout Mode for CI](./BeginnerGuide-CI.md)**  
+>
+> The two guides are complementary but distinct. Follow the one that matches your environment.
+
 
 ### Transparent Solana Testing Infrastructure
 
@@ -442,6 +454,9 @@ cp -r ../beargrease-by-cabrillo/scripts ./scripts/beargrease
 
 This copies the full Beargrease test harness into your *placebo*project.
 
+👉 You do **not** need to copy scripts if you're using Beargrease in GitHub CI — see [CI Beginner Guide](./BeginnerGuide-CI.md).
+
+
 
 
 ### 🧭 Step 4.3 --- Make the Scripts Executable
@@ -579,6 +594,7 @@ This allows Beargrease to run tests with *yarn test*.
 
 At this point, you have all Beargrease scripts installed, your projectrequirements set up, and your wallet ready. You are now ready to run Beargrease for the first time.
 
+👉 If you're using GitHub CI instead of local testing, Beargrease runs as part of your CI workflow — see the [CI Beginner Guide](./BeginnerGuide-CI.md).
 
 
 #### 6.1: Basic Usage
