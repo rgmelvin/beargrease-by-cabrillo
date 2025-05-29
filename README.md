@@ -127,7 +127,7 @@ Use the [Beginner’s Guide to Directory Checkout Mode for CI](./docs/BeginnerGu
 ## 📚 Documentation & Guides
 
 - [Beginner’s Guide for Local Mode](./docs/BeginnerGuide.md)
-- [Beginner’s Guide for GitHub CI](./docs/BeginnerGuide_CI.md)
+- [Beginner’s Guide for GitHub CI](./docs/BeginnerGuide-sCI.md)
 
 ---
 
