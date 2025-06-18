@@ -2,6 +2,12 @@
 
 # Beginner’s Guide for Beargrease v1.1.0  
 
+> ⚠️ **Archived Guide**
+> 
+> This document was part of a prior working draft or release.
+> 
+> Please use the updated version here: [📘 Beginner Guide v1.1.0](../BeginnerGuide.md)
+
 ## Directory Checkout Mode for GitHub CI
 
 **Maintained by:** Cabrillo! Labs  

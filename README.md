@@ -19,11 +19,12 @@ Beargrease is a fast, transparent, environment-aware, script-driven test harness
 - [What is Beargrease?](#what-is-beargrease)
 - [What Beargrease Does](#what-beargrease-does)
 - [✨ Features](#-features)
+- [🧠 Smart by Design](#-smart-by-design)
+- [📊 Comparing Beargrease to Other Solana Testing Tools](#-comparing-beargrease-to-other-solana-testing-tools)
 - [⚠️ Two Modes of Use](#️-two-modes-of-use)
 - [Quick Start - Local & CI](#quick-start---local--ci)
 - [📚 Beginner Guides](#-beginner-guides)
 - [Example: Placebo Test Project](#example-placebo-test-project)
-- [🧠 Smart by Design](#-smart-by-design)
 - [Architecture & Flow](#architecture--flow)
 - [Script Execution Order](#script-execution-order)
 - [🧰 Script Reference](#-script-reference)
@@ -38,8 +39,6 @@ Beargrease is a fast, transparent, environment-aware, script-driven test harness
 
 ---
 
-
-
 ## Version & Maintainer
 
 - **Version:** v1.1.0
@@ -52,22 +51,107 @@ Beargrease is a fast, transparent, environment-aware, script-driven test harness
 
 ## What is Beargrease?
 
-Beargrease is a developer-first harness that brings **clarity and reliability** to Solana Anchor testing. It senses whether it is running in CI or locally and adapts automatically - so you don't need to configure mode switches or rewrite test logic. Everything is visible, traceable, and scriptable. Beargrease not only detects your environment - it also detects your test language. If you give it Mocha tests (.mts, .ts, or .js) then it runs Mocha. If you give it Rust tests (.rs) then it runs `anchor test`
+Beargrease is a test harness designed for developers that brings **clarity and reliability** to Solana Anchor testing. It detects whether you are running in a local or CI environment and adapts automatically—so you do not need to configure mode switches or rewrite test logic. It also detects your test language: if you supply Mocha tests (`.mts`, `.ts`, or `.js`), Beargrease runs them using Mocha; if you provide Rust-based Anchor tests (`.rs`), it executes them via `anchor test`.
 
-Beargrease:
+Beargrease was built to eliminate fragile validator setups and to give developers tools they can trust. It provides:
 
-- Detects your test environment - local or GitHub CI
-- Spins up a Docker-based `solana-test-validator`
-- Deploys your program and auto-injects its ID
-- Creates and funds local or CI wallets
-- Runs TypeScript tests using Mocha (ESM compatible) or Rust tests using `anchor test`
-- Shuts everything down cleanly
+- Environment detection: local vs. CI
+- Docker-based `solana-test-validator` for isolated test runs
+- Program deployment and automatic ID injection
+- Wallet creation and funding (for local and CI modes)
+- Test execution via Mocha or `anchor test`, based on your project
+- Clean teardown after each run
 
-Beargrease was built to end fragile validator setups and to give developers tools that they can trust.
+Beargrease is a **test harness**, not a test-writing tool. It does not scaffold test files, generate stubs, or guide you through Solana’s program interaction model. It assumes that your tests are already written using standard Rust or TypeScript practices.
+
+You bring the test logic. Beargrease runs it—cleanly, visibly, and consistently across both local and GitHub CI environments.
+
+If you are new to writing tests for Solana Anchor programs, we recommend:
+
+- [Anchor Testing Documentation](https://www.anchor-lang.com/docs/testing)
+- [Coral Anchor Examples](https://github.com/coral-xyz/anchor/tree/master/examples)
+- [Placebo](https://github.com/rgmelvin/placebo) — A minimal testable Anchor program using Beargrease
 
 ---
 
+### How It Works – At a Glance
 
+After installing Beargrease and preparing your testable Anchor project:
+
+```bash
+$ ./scripts/run-tests.sh
+```
+
+Beargrease will:
+
+- Launch a Docker-based Solana test validator
+- Deploy your program and inject its ID
+- Create or decode a wallet
+- Run your `.mts` (TypeScript) or `.rs` (Rust) tests
+- Shut everything down cleanly
+
+All from a single command. No guesswork. No lingering containers.
+
+📘 **Need help getting started?**
+ See the [Beargrease Beginner Guide](https://github.com/rgmelvin/beargrease-by-cabrillo/blob/main/docs/BeginnerGuide.md) for step-by-step walkthroughs in both local and GitHub CI environments.
+
+---
+
+## Key Features
+
+### Environment Awareness
+Beargrease automatically detects whether it is running locally or in GitHub CI. It adapts wallet handling, validator timing, file paths, and execution mode accordingly—without requiring mode flags or reconfiguration.
+
+### Validator Lifecycle via Docker
+Spins up a fresh `solana-test-validator` container for every run, ensuring full isolation, reproducibility, and zero port or ledger conflicts. Cleans up automatically after test completion.
+
+### Wallet Management
+- **Local Mode**: Generates keypairs under `.ledger/wallets/`
+- **CI Mode**: Accepts a `BEARGREASE_WALLET_SECRET`, which is securely decoded inside the container and used at runtime.
+
+### Program ID Injection
+Automatically patches both `Anchor.toml` and `lib.rs` with the deployed program ID—preventing `DeclaredProgramIdMismatch` errors and ensuring that your test program runs with the correct address every time.
+
+### Mocha or Anchor Test Detection
+Executes tests using Mocha (for `.mts`, `.ts`, or `.js` files) or `anchor test` (for Rust files), based on what it finds in the test directory. No manual switching required.
+
+---
+
+### Beginner-Friendly Documentation
+
+Beargrease is not just a tool—it is a teaching platform.
+
+It includes:
+
+- A full [Beginner Guide](https://github.com/rgmelvin/beargrease-by-cabrillo/blob/main/docs/BeginnerGuide.md) that walks you through setup, execution, troubleshooting, and customization.
+- A visual test architecture diagram that demystifies how the harness operates.
+- Fully transparent Bash and TypeScript scripts—no opaque wrappers, no black-box magic.
+
+Whether you are debugging your first Solana test or building a production CI pipeline, the documentation shows you exactly what Beargrease is doing and how to adapt it.
+
+---
+
+## Who Should Use Beargrease?
+
+Beargrease is designed for developers who need **clean, reproducible, and transparent test execution** for Solana programs using the Anchor framework. It is ideal for:
+
+- **Teams building CI/CD pipelines**
+   Runs cleanly inside GitHub Actions and other CI systems with full validator lifecycle control and no fragile local setup.
+- **Developers working in both Rust and TypeScript**
+   Automatically detects and runs either Mocha-based TypeScript tests or `anchor test` suites with no manual switches or config changes.
+- **Builders who care about visibility and reproducibility**
+   Every step is scriptable, observable, and overrideable. You are never left guessing what ran, what failed, or why.
+- **Projects that use Docker-based validators**
+   Beargrease launches a fresh `solana-test-validator` inside Docker for every run—isolated, ephemeral, and teardown-safe.
+- **Those new to Solana test harnesses**
+   With full beginner documentation, architecture diagrams, and annotated scripts, Beargrease is a welcoming entry point for serious testing.
+
+Beargrease is **not** a test-writing tool. It does not scaffold or generate your `.ts` or `.rs` test files.
+ It assumes you already know what to test—**and makes sure your tests run cleanly, every time.**
+
+📘 For writing tests, see the official [Anchor testing documentation](https://www.anchor-lang.com/docs/testing) or explore [Placebo](https://github.com/rgmelvin/placebo) for a minimal working example.
+
+---
 
 ## What Beargrease Does
 
@@ -84,33 +168,6 @@ Whether in GitHub CI or on your machine, Beargrease adapts automatically.
 
 ---
 
-
-
-## ✨ Features
-
-- 🧠 **Environment-Aware**  
-  Automatically detects whether you are running locally or inside GitHub CI and adapts wallet handling, validator timing, file paths, and execution accordingly.
-
-- 🐳 **Validator Lifecycle via Docker**  
-  Starts and stops a dedicated `solana-test-validator` container for each run. Isolated, reliable, and zero-conflict.
-
-- 🔐 **Wallet Management**  
-  - Local: creates keypairs under `.ledger/wallets/`
-  - CI: decodes `BEARGREASE_WALLET_SECRET` into container runtime
-
-- 📌 **Program ID Injection**  
-  Dynamically updates `Anchor.toml` and `lib.rs` with the deployed program ID.
-
-- 🧪 **Mocha or Anchor Test Detection**  
-  Chooses test runner based on what files are present.
-
-- 📚 **Beginner-Friendly**  
-  Includes a visual architecture diagram, step-by-step beginner guides, and transparent script control.
-
----
-
-
-
 ### 🧠 Smart by Design
 
 Beargrease uses environment detection internally to choose the correct paths:
@@ -123,7 +180,28 @@ You do not have to configure anything else. Just run `run-tests.sh`.
 
 ---
 
+### 📊 Comparing Beargrease to Other Solana Testing Tools
 
+In the evolving Solana development ecosystem, several test frameworks and runtime options now exist. Beargrease remains uniquely focused on **full validator-based test orchestration**, designed for clarity, reliability, and total transparency across both local and CI environments. Other solutions may prioritize speed, virtualization, or minimal setup.
+
+Here’s a comparison of current options:
+
+| Feature / Tool                | **Beargrease**                                           | [**LiteSVM**](https://www.anchor-lang.com/docs/testing/litesvm) | [**Mollusk**](https://www.anchor-lang.com/docs/testing/mollusk) | [**Bankrun**](https://github.com/ar-nelson/bankrun) | **Jest + @solana/web3.js** |
+| ----------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------------------------------- | -------------------------- |
+| **Test Runtime**              | Full `solana-test-validator` in Docker                   | Virtualized Solana SVM runtime (no validator)                | Virtualized transaction emulator                             | Rust-based emulator                                 | JavaScript test runtime    |
+| **CI Compatible**             | ✅ Native GitHub Actions support with secrets             | ✅ Works in CI (requires Node.js)                             | ✅ Lightweight & fast                                         | ⚠️ Not CI-native (manual)                            | ✅ With Node.js setup       |
+| **Language Support**          | TypeScript (Mocha), Rust (`anchor test`)                 | TypeScript + Anchor macros                                   | TypeScript + Anchor macros                                   | Rust only                                           | TypeScript only            |
+| **Test Lifecycle Automation** | ✅ Full lifecycle: validator, wallet, program ID, cleanup | ❌ Manual runtime setup                                       | ❌ Manual runtime setup                                       | ❌ Manual                                            | ❌ No built-in setup        |
+| **Program ID Injection**      | ✅ Auto-injected into `Anchor.toml`, `lib.rs`             | ❌ Manual                                                     | ❌ Manual                                                     | ❌ Manual                                            | ❌ Manual                   |
+| **Validator Needed**          | ✅ Yes (isolated Docker container)                        | ❌ No validator needed                                        | ❌ No validator needed                                        | ❌ No validator needed                               | ❌ No validator needed      |
+| **Parallel Execution**        | ✅ CI parallelism possible with manual setup              | ✅ Fast by default                                            | ✅ Fast by default                                            | ⚠️ Possible but undocumented                         | ✅ If designed manually     |
+| **Environment Awareness**     | ✅ Fully automated mode detection (CI vs local)           | ❌ Manual config                                              | ❌ Manual config                                              | ❌ Manual                                            | ❌ Manual CI setup          |
+| **Beginner-Friendly Guides**  | ✅ Rich prose guides, diagrams, and appendices            | ❌ Sparse docs                                                | ❌ Sparse docs                                                | ❌ Sparse or experimental                            | ❌ Community dependent      |
+| **Best Use Case**             | Full validator testing in CI + Web3 + SPL                | Lightning-fast local test loops                              | Runtime-agnostic Anchor test switcher                        | Emulator-style logic testing                        | Lightweight JS unit tests  |
+
+Beargrease’s goal is not to replace these tools but to **complement** them — by ensuring you always have a stable, validator-faithful test harness for workflows that demand full Solana behavior and external interactions.
+
+---
 
 ## ⚠️ Two Modes of Use
 
@@ -414,7 +492,7 @@ Beargrease currently supports Mocha and Anchor (`anchor test`), but `run-tests.s
 
 Consider adding a `--runner` flag or customizing detection logic if your project uses a different testing framework.
 
-Want to contribute? Fork it, tweak it, break it, fix it, go wild — and send a PR 🛠️
+Want to contribute? Fork it, tweak it, break it, fix it, go w — and send a PR 🛠️
 
 ---
 
@@ -454,7 +532,7 @@ Beargrease is built to deliver your tests with the same kind of reliability.
 
 ## About the Author
 
-I’m **Richard (Rich) G. Melvin**, founder of Cabrillo! Labs. I hold a Ph.D. in Biochemistry and Molecular Genetics from UNSW, and I’m self-taught in systems programming, smart contracts, and decentralized infrastructure. Beargrease reflects my goal of building serious, approachable tools that help researchers and developers own their work in Web3.
+I’m **Richard (Rich) G. Melvin**, founder of Cabrillo! Labs. I hold a Ph.D. in Biochemistry and Molecular Genetics from the University of New South Wales, and I’m self-taught in systems programming, smart contracts, and decentralized infrastructure. Beargrease reflects my goal of building serious, approachable tools that help researchers and developers own their work in Web3.
 
 ---
 
