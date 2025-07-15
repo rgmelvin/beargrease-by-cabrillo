@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------------------------------------------------
+# 🧪 Beargrease Linter Rule: Header Block Compliance
+# ----------------------------------------------------------------------
+#
+# Verifies that each script includes a standardized, full-width header block
+# following the Beaergrease Shel Script Protocol.
+#
+# Enforced fields (minimum required):
+#   - Full-width dash line (80 dashes)
+#   - Maintainer:
+#   - License:
+#   - Version:
+#   - Exit Code Reference:
+#   - Usage:
+#   - Options:
+#
+# Maintainer: Cabrillo Labs, Ltd 2025
+# License: MIT
+# Version: 0.1.0
+#
+# ----------------------------------------------------------------------
+#
+# Exit Code Reference:
+#   0   - Header block is complete and correct
+#   91  - Header block is incomplete or missing required fields
+#
+# ----------------------------------------------------------------------
+#
+# Usage:
+#   Called automatically by linter.sh. Not intended for direct use.
+#
+# Options:
+#   None
+#
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# 🐻 Beargrease Linter Rule Environment Setup
+# ----------------------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINTER_DIR="$SCRIPT_DIR"
+ROOT_DIR="$(cd "$LINTER_DIR/../.." && pwd)"
+SHARED_DIR="$ROOT_DIR/scripts/shared"
+
+source "$SHARED_DIR/logging.sh"
+
+# ----------------------------------------------------------------------
+# 🔍 Header Block Verification
+# ----------------------------------------------------------------------
+
+log_ts "🔍 Checking for required script header block..."
+
+# Required fields in the header
+REQUIRED_FIELDS=(
+    "# ----------------------------------------------------------------------"
+    "# Maintainer:"
+    "# License:"
+    "# Version:"
+    "# Exit Code Reference:"
+    "# Usage:"
+    "# Options:"
+)
+
+MISSING=()
+
+for field in "${REQUIRED_FIELDS[@]}"; do
+  if ! grep -q "$field" "$TARGET_FILE"; then
+    MISSING+=("$field")
+  fi
+done
+
+# ----------------------------------------------------------------------
+# ❗ Determine Compliance
+# ----------------------------------------------------------------------
+
+if [[ ${#MISSING[@]} -gt 0 ]]; then
+  log_ts "❌ Header block is incomplete."
+  log_block <<EOF
+💡 NEXT STEPS:
+  1. Ensure the script header includes the following fields:
+
+$(for field in "${MISSING[@]}"; do echo "  - $field"; done)
+
+  2. Refer to Appendix D: Structural Template in the Beargrease Shell Script Protocol and Style Guide.
+EOF
+  exit 91
+fi
+
+# ----------------------------------------------------------------------
+# ✅ Completion
+# ----------------------------------------------------------------------
+
+log_ts "✅ Header block check passed."

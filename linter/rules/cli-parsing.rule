@@ -1,0 +1,50 @@
+#1/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------------------------------------------------
+# 💤 Beargrease Linter Rule: CLI Parsing (Deferred)
+# ----------------------------------------------------------------------
+#
+# Placeholder for future implementation.
+#
+# This rule will verify consistent CLI argument parsing in Beargrease
+# scripts, enforcing structured usage of getopts or standard parsing
+# conventions as documented in the Protocol and Style Guide.
+#
+# Maintainer: Cabrillo Labs, Ltd. 2025
+# License: MIT
+# Version: 0.1.0
+#
+# ----------------------------------------------------------------------
+#
+# Exit Code Reference:
+#   0   - Placeholder run (no check performed)
+#
+# ----------------------------------------------------------------------
+#
+# Usage:
+#   Called automatically by linter.sh. Not intended for direct use.
+#
+# Options:
+#   None
+#
+# ----------------------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINTER_DIR="$SCRIPT_DIR"
+ROOT_DIR="$(cd "$LINTER_DIR/../.." && pwd)"
+SHARED_DIR="$ROOT_DIR/scripts/shared"
+
+source "$SHARED_DIR/logging.sh"
+
+# ----------------------------------------------------------------------
+# 🚧 Deferred Rule Notice
+# ----------------------------------------------------------------------
+
+log_ts "⚙️ [cli-parsing.rule] This check is a placeholder. CLI parsing enforcement will be implemented in a future version."
+
+# ----------------------------------------------------------------------
+# ✅ Completion
+# ----------------------------------------------------------------------
+
+exit 0

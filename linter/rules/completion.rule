@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------------------------------------------------
+# 🧪 Beargrease Linter Rule: Completion Log Check
+# ----------------------------------------------------------------------
+# 
+# Verifies that the target script includes a final log statement signaling
+# unambiguous successful completion
+#
+# Required format:
+#
+#   log_ts "✅ [name-of-your-script.sh] completed successfully."
+#
+# The square brackets around the script name are **mandatory** to ensure
+# visual consistency across Beargrease logs.
+#
+# Maintainer: Cabrillo Labs, Ltd. 2025
+# License: MIT
+# Version: 0.1.0
+#
+# ----------------------------------------------------------------------
+#
+# Exit Code Reference:
+#   0   - Check passed
+#   99  - Completion log missing#
+# ----------------------------------------------------------------------
+#
+# Usage:
+#   Called automatically by linter.sh. Not intended for direct use.
+#
+# Options:
+#   None
+#
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# 🐻 Beargrease Linter Rule Environment Setup
+# ----------------------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINTER_DIR="$SCRIPT_DIR"
+ROOT_DIR="$(cd "$LINTER_DIR/../.." && pwd)"
+SHARED_DIR="$ROOT_DIR/scripts/shared"
+
+source "$SHARED_DIR/logging.sh"
+
+# ----------------------------------------------------------------------
+# 🔍 Completion Log Check
+# ----------------------------------------------------------------------
+
+log_ts "🔍 Checking for final completion log..."
+
+# Define the expected pattern.
+# Use a flexible regex that matches:
+# ✅ [optional script name] completed successfully.
+
+COMPLETION_PATTERN='✅.*completed successfully\.'
+
+# Search the script for the completion log.
+if ! grep -qE "$COMPLETION_PATTERN" "$TARGET_FILE"; then
+  log_ts "❌ Completion log statement is missing."
+
+  log_block <<EOF
+💡 NEXT STEPS:
+  1. Add a final log line to the end of your script to confirm successful execution.
+
+     Example:
+
+       log_ts "✅ [name-of-your-script.sh] completed successfully."
+
+  2. The square brackets around the script name are **required**. This maintains visual consistency in Beargrease logs.
+
+  3. This ensures that all Beargrease scripts communicate a clear, unambiguous success state.
+
+  4. Refer to Section 10: Completion in the Beargrease Shell Script Protocol and Style Guide.
+EOF
+
+  exit 99
+fi
+
+# ----------------------------------------------------------------------
+# ✅ Completion
+# ----------------------------------------------------------------------
+
+log_ts "✅ Completion log check passed."

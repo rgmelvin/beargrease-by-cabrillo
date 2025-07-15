@@ -1,0 +1,58 @@
+#1/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------------------------------------------------
+# 💤 Beargrease Linter Rule: Constants Declaration (Deferred)
+# ----------------------------------------------------------------------
+#
+# Placeholder for future enforcement of consistent global constant
+# declarations in Beargrease scripts.
+#
+# Planned checks will include:
+#   - Ensuring all global constants are declared in a dedicated section.
+#   - Enforcing uppercase snake_case naming (e.e., MY_CONSTANT=42).
+#   - Verifying that constants are immutable (readonly where applicable).
+#
+# Currently unimplemented-placeholder only.
+#
+# Maintainer: Cabrillo Labs, Ltd. 2025
+# License: MIT
+# Version: 0.1.0
+#
+# ----------------------------------------------------------------------
+#
+# Exit Code Reference:
+#    0  - Placeholder check passed
+#
+# ----------------------------------------------------------------------
+#
+# Usage: 
+#   Called automatically by linter.sh. Not intended for direct use.
+#
+# Options:
+#   None
+#
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# 🐻 Beargrease Linter Rule Environment Setup
+# ----------------------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINTER_DIR="$SCRIPT_DIR"
+ROOT_DIR="$(cd "$LINTER_DIR/../.." && pwd)"
+SHARED_DIR="$ROOT_DIR/scripts/shared"
+
+source "$SHARED_DIR/logging.sh"
+
+# ----------------------------------------------------------------------
+# ⏳ Placeholder Logic
+# ----------------------------------------------------------------------
+
+log_ts "🛠️ [constants.rule] Placeholder only. This check will be implemented in a future version."
+
+# ----------------------------------------------------------------------
+# ✅ Completion
+# ----------------------------------------------------------------------
+
+log_ts "✅ [constants.rule] completed successfully (placeholder)."

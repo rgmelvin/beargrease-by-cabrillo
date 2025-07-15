@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------------------------------------------------
+# 🧪 Beargrease Linter Rule: Dependency Check
+# ----------------------------------------------------------------------
+#
+# Verifies that the target script includes a proper dependency check or
+# explicitly declares that it requires no external dependencies.
+#
+# Enforced patterns:
+#   - Standard dependencyh check loop: `for cmd in docker grep jq; do`
+#   - No dependencies declaration: `# ✅ No external dependencies required.`
+#
+# Maintainer: Cabrillo Labs, Ltd. 2025
+# License: MIT
+# Version: 0.1.0
+#
+# ----------------------------------------------------------------------
+#
+# Exit Code Reference:
+#   0   - Dependency check present or explicitly declared as none
+#   96  - Dependency check missing and no "no dependencies" declaration found
+#
+# ----------------------------------------------------------------------
+#
+# Usage:
+#   Called automatically by linter.sh. Not intended for direct use.
+#
+# Options:
+#   None
+#
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# 🐻 Beargrease Linter Rule Environment Setup
+# ----------------------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINTER_DIR="$SCRIPT_DIR"
+ROOT_DIR="$(cd "$LINTER_DIR/../.." && pwd)"
+SHARED_DIR="$ROOT_DIR/scripts/shared"
+
+source "$SHARED_DIR/logging.sh"
+
+# ----------------------------------------------------------------------
+# 🔍 Dependency Check Logic
+# ----------------------------------------------------------------------
+
+log_ts "🔍 Checking for dependency check block or explicit no-dependency declaration..."
+
+# Define the required pattern for the standard dependency check loop.
+DEPENDENCY_LOOP_PATTERN='for cmd in docker grep jq; do'
+
+# Define the allowed no-dependency declaration for minimal scripts.
+NO_DEPS_DECLARATION='# ✅ No external dependencies required.'
+
+HAS_DEPENDENCY_CHECK=false
+HAS_NO_DEPS_DECLARATION=false
+
+# Check for the standard dependency check loop.
+if grep -qF "$DEPENDENCY_LOOP_PATTERN" "$TARGET_FILE"; then
+  HAS_DEPENDENCY_CHECK=true
+fi
+
+# Check for explicit no-dependencies declaration.
+if grep -qF "$NO_DEPS_DECLARATION" "$TARGET_FILE"; then
+  HAS_NO_DEPS_DECLARATION=true
+fi
+
+# ----------------------------------------------------------------------
+# ❗ Determine Compliance
+# ----------------------------------------------------------------------
+
+# Determine Compliance
+if  [[ "$HAS_DEPENDENCY_CHECK" == false && "$HAS_NO_DEPS_DECLARATION" == false ]]; then
+  log_ts "❌ Dependency check is missing or undocumented."
+
+  log_block <<EOF
+💡 NEXT STEPS:
+  1. All Beargrease scripts must include a dependency check unless explicitly exempt.
+
+  2. Add a standard dependency check block:
+
+    for cmd in docker grep jq; do
+      if ! command -v "\$cmd" >/dev/null 2>&1; then
+        MISSING_DEPS+=("\$cmd")
+      fi
+    done
+
+  3. If your script **truly has no dependencies**, declare it explicitly in the header:
+
+     # ✅ No external dependencies required.
+
+  4. Refer to Section 8: Dependency Check  in the Beargrease Shell Script Protocol and Style Guide.
+EOF
+
+  exit 96
+fi
+
+# ----------------------------------------------------------------------
+# ✅ Completion
+# ----------------------------------------------------------------------
+
+log_ts "✅ Dependency check passed."

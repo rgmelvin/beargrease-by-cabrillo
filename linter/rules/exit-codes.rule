@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------------------------------------------------
+# 🧪 Beargrease Linter Rule: Exit Code Documentation
+# ----------------------------------------------------------------------
+#
+# Ensures that all exit codes used in the script are properly documented
+# in a structured "Exit Code Reference" section in the header.
+#
+# Enforced patterns:
+#   - Every numeric `exit <code>` must be listed in the header block.
+#   - Missing declarations trigger linter failure with guidance.
+#
+# Maintainer: Cabrillo Labs, Ltd. 2025
+# License: MIT
+# Version: 0.1.0
+#
+# ----------------------------------------------------------------------
+#
+# Exit Code Reference:
+#   0   - All exit codes documented correctly
+#   97  - No Exit Code Reference found in the header
+#   98  - Exit codes used in the body but not documented in the header
+#
+# ----------------------------------------------------------------------
+#
+# Usage:
+#   Called automatically by linter.sh. Not intended for direct use.
+#
+# Options:
+#   None
+#
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# 🐻 Beargrease Linter Rule Environment Setup
+# ----------------------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINTER_DIR="$SCRIPT_DIR"
+ROOT_DIR="$(cd "$LINTER_DIR/../.." && pwd)"
+SHARED_DIR="$ROOT_DIR/scripts/shared"
+
+source "$SHARED_DIR/logging.sh"
+
+# ----------------------------------------------------------------------
+# 🔍 Exit Code Documentation Check
+# ----------------------------------------------------------------------
+
+log_ts "🔍 Checking for documented exit codes..."
+
+# Extract declared exit codes from the header.
+DECLARED_CODES=($(grep '^# *[0-9][0-9]* *-' "$TARGET_FILE" | awk '{print $2}'))
+
+if [[ ${#DECLARED_CODES[@]} -eq 0 ]]; then
+  log_ts "❌ No Exit Code Reference found in the header."
+  log_block <<EOF
+💡 NEXT STEPS:
+  1. Add an Exit Code Reference section to your script header, listing all exit codes.
+
+     Example:
+       # Exit Code Reference:
+       #   0    - Success
+       #  31    - Missing dependency
+       #  35    - Validator shutdown failure
+
+  2. Refer to Section 10: Exit Codes in the Beargrease Shell Script Protocol and Style Guide.
+EOF
+  exit 97
+fi
+
+# ----------------------------------------------------------------------
+# 🔎 Compare Used Exit Codes to Declared list
+# ----------------------------------------------------------------------
+
+# Find all numeric exit statements in the script body.
+USED_CODES=($(grep -E 'exit[[:space:]]+[0-9]+' "$TARGET_FILE" | awk '{print$2}'))
+
+# Check each used code against the declared list.
+MISSING_CODES=()
+
+for code in "${USED_CODES[@]}"; do
+  FOUND=false
+  for declared in "${DECLARED_CODES[@]}"; do
+    if [[ "$code" == "$declared" ]]; then
+      FOUND=true
+      break
+    fi
+  done
+
+  if [[ "$FOUND" == false ]]; then
+    MISSING_CODES+=("$code")
+  fi
+done
+
+# ----------------------------------------------------------------------
+# ❗ Determine Compliance
+# ----------------------------------------------------------------------
+
+if [[ ${#MISSING_CODES[@]} -gt 0 ]]; then
+  log_ts "❌ Undocumented exit codes found: ${MISSING_CODES[*]}"
+  log_block <<EOF
+💡 NEXT STEPS:
+  1. Ensure every \`exit <code>\` in the script is listed in the Exit Code Reference block.
+
+  2. Add the following missing codes to the header:
+
+$(for code in "${MISSING_CODES[@]}"; do echo "  - $code"; done)
+
+  3. Refer to Section 10: Exit Codes in the Beargrease Shell Script Protocol and Style Guide.
+EOF
+  exit 98
+fi
+
+# ----------------------------------------------------------------------
+# ✅ Cimpletion
+# ----------------------------------------------------------------------
+
+log_ts "✅ Exit code documentation check passed."

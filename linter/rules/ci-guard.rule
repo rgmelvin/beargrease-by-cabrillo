@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------------------------------------------------
+# 🧪 Beargrease Linter Rule: CI Guard Compliance
+# ----------------------------------------------------------------------
+#
+# Ensures that scripts include either:
+#   - A CI guard block to prevent destructive operations in CI environments.
+#   - Or an explicit "CI-safe" declaration in the header.
+#
+# Maintainer: Cabrillo Labs, Ltd. 2025
+# License: MIT
+# Version: 0.1.0
+#
+# ----------------------------------------------------------------------
+# 
+# Exit Code Reference:
+#   0   - Success
+#   95  - CI guard missing or undocumented
+#
+# ----------------------------------------------------------------------
+#
+# Usage:
+#   Called automatically by linter.sh. Not intended for direct use.
+#
+# Options:
+#   None
+#
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# 🐻 Beargrease Linter Rule Environment Setup
+# ----------------------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINTER_DIR="$SCRIPT_DIR"
+ROOT_DIR="$(cd "$LINTER_DIR/../.." && pwd)"
+SHARED_DIR="$ROOT_DIR/scripts/shared"
+
+source "$SHARED_DIR/logging.sh"
+
+# ----------------------------------------------------------------------
+# 🔧 Rule Logic: CI Guard Check
+# ----------------------------------------------------------------------
+
+log_ts "🔍 Checking for CI guard..."
+
+# Check for the presence of the CI guard pattern.
+CI_GUARD_PATTERN='if [[ "${CI:-}" == "true" ]]; then'
+
+# Check for CI-safe declaration in the header.
+CI_SAFE_DECLARATION='# ✅ CI-safe: This script performs no destructive operations'
+
+HAS_CI_GUARD=false 
+HAS_CI_SAFE_DECLARATION=false
+
+# Check for the guard in the script body.
+if grep -qF "$CI_GUARD_PATTERN" "$TARGET_FILE"; then
+  HAS_CI_GUARD=true
+fi
+
+# Check for the CI-safe comment in the header.
+if grep -qF "$CI_SAFE_DECLARATION" "$TARGET_FILE"; then
+  HAS_CI_SAFE_DECLARATION=true
+fi
+
+# ----------------------------------------------------------------------
+# ❗ Failure Condition
+# ----------------------------------------------------------------------
+
+# Determine compliance
+if [[ "$HAS_CI_GUARD" == false && "$HAS_CI_SAFE_DECLARATION" == false ]]; then
+  log_ts "❌ CI guard is missing or undocumented."
+
+  log_block <<EOF
+💡 NEXT STEPS:
+  1. Add a CI guard to prevent destructive actions in CI environments:
+
+     if [[ "\${CI:-}" == "true" ]]; then
+       log_ts "🏃‍♂️ Skipping script-name.sh in CI environment."
+       exit 0
+     fi
+
+  2. Alternatively, if the script is intentionally CI-safe, include this declaration in the header:
+
+     # ✅ CI-safe: This script performs no destructive operations
+
+  3. Refer to Section 5: CI Guard in the Beargrease Shell Script Protocol and Style Guide.
+EOF
+
+  exit 95
+fi
+
+# ----------------------------------------------------------------------
+# Completion
+# ----------------------------------------------------------------------
+
+log_ts "✅ CI guard check passed."

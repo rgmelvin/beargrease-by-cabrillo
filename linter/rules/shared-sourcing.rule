@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------------------------------------------------
+# 🧪 Beargrease Linter Rule: Shared Module Sourcing
+# ----------------------------------------------------------------------
+#
+# This rule ensures that each Beargrease script properly sources
+# the shared logging and CLI parsing modules:
+#
+#   - logging.sh
+#   - parse_cli.sh
+#
+# This enforces consistent logging output and argument handling across
+# the entire Beargrease toolchain.
+#
+# Maintainer: Cabrillo Labs, Ltd. 2025
+# License: MIT
+# Version: 0.1.0
+#
+# ----------------------------------------------------------------------
+#
+# Exit Code Reference:
+#   0   - Passed (shared modules sourced correctly)
+#   94  - Shared module sourcing missing or incorrect
+#
+# ----------------------------------------------------------------------
+#
+# Usage:
+#   Called automatically by linter.sh. Not intended for direct use.
+#
+# Options:
+#   None
+#
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# 🐻 Beargrease Linter Rule Environment Setup
+# ----------------------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINTER_DIR="$SCRIPT_DIR"
+ROOT_DIR="$(cd "$LINTER_DIR/../.." && pwd)"
+SHARED_DIR="$ROOT_DIR/scripts/shared"
+
+source "$SHARED_DIR/logging.sh"
+
+# ----------------------------------------------------------------------
+# 🔍 Shared Module Sourcing Check
+# ----------------------------------------------------------------------
+
+log_ts "🔍 Checking for shared module sourcing..."
+
+REQUIRED_LINES=(
+    'source "$SCRIPT_DIR/../shared/logging.sh"'
+    'source "$SCRIPT_DIR/../shared/parse_cli.sh"'
+)
+
+MISSING=()
+
+for line in "${REQUIRED_LINES[@]}"; do
+  if ! grep -qF "$line" "$TARGET_FILE"; then
+    MISSING+=("$line")
+  fi
+done
+
+# ----------------------------------------------------------------------
+# ❌ Failure handling
+# ----------------------------------------------------------------------
+
+if [[ ${#MISSING[@]} -gt 0 ]]; then
+  log_ts "❌ Shared modules are not properly sourced."
+  log_block <<EOF
+💡 NEXT STEPS:
+  1. Ensure your script includes the following lines after defining SCRIPT_DIR:
+
+$(for line in "${MISSING[@]}"; do echo "  - $line"; done)
+
+  2. This enforces consistent logging and CLI behaviour across Beargrease.
+
+  3. Refer to Section 3: Beargrease Shared Module Sourcing in the Beargrease Shell Script Protocol and Style Guide.
+EOF
+  exit 94
+fi
+
+# ----------------------------------------------------------------------
+# ✅ Completion
+# ----------------------------------------------------------------------
+
+log_ts "✅ Shared module sourcing check passed."

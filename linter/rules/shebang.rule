@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------------------------------------------------
+# 🧪 Beargrease Linter Rule: Shebang and Strict Mode
+# ----------------------------------------------------------------------
+#
+# This rule ensures that each Beargrease script starts with:
+#
+#   1. A POSIX-compliant shebang line:
+#        #!/usr/bin/env bash
+#
+#   2. Immediate actovation of strict mode:
+#        set -euo pipefail
+#
+# These conventions enforce portability and safe execution across
+# UNIX-like systems.
+#
+# Maintainer: Cabrillo Labs, Ltd. 2025
+# License: MIT
+# Version: 0.1.0
+#
+# ----------------------------------------------------------------------
+#
+# Exit code Reference:
+#   0   - Passed (shebang and strict mode are correct)
+#   92  - Missing or incorrect shebang
+#   93  - Missing strict mode declaration
+#
+# ----------------------------------------------------------------------
+#
+# Usage:
+#   Called automatically by linter.sh. Not intended for direct use.
+#
+# Options:
+#   None
+#
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# 🐻 Beargrease Linter Rule Environment Setup
+# ----------------------------------------------------------------------
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LINTER_DIR="$SCRIPT_DIR"
+ROOT_DIR="$(cd "$LINTER_DIR/../.." && pwd)"
+SHARED_DIR="$ROOT_DIR/scripts/shared"
+
+source "$SHARED_DIR/logging.sh"
+
+# ----------------------------------------------------------------------
+# 🔍 Shebang and Strict Mode Check
+# ----------------------------------------------------------------------
+
+log_ts "🔍 Checking for shebang and strict mode..."
+
+EXPECTED_SHEBANG='#!/usr/bin/env bash'
+EXPECTED_STRICT='set -euo pipefail'
+
+# Read first 5 lines of the file
+HEAD_CONTENT=$(head -n 5 "$TARGET_FILE")
+
+# ----------------------------------------------------------------------
+# ❌ Shebang Check
+# ----------------------------------------------------------------------
+
+if ! grep -qF "EXPECTED_SHEBANG" <<< "$HEAD_CONTENT"; then
+  log_ts "❌ Missing or incorrect shebang line."
+  log_block <<EOF
+💡 NEXT STEPS:
+  1. The first line of the script must be:
+
+     $EXPECTED_SHEBANG
+
+  2. This ensures environment portability across UNIX-like systems.
+
+  3. Refer to Section 1: Shebang and Safety Settings in the Beargrease Shell Script Protocol and Style Guide.
+EOF
+  exit 92
+fi
+
+# ----------------------------------------------------------------------
+# ❌ Strict Mode Check
+# ----------------------------------------------------------------------
+
+if ! grep -qF "$EXPECTED_STRICT" <<< "$HEAD_CONTENT"; then
+  log_ts "❌ Missing 'set -euo pipefail' strict mode."
+  log_block <<EOF
+💡 NEXT STEPS:
+  1. Immediately after the shebang, include:
+
+     $EXPECTED_STRICT
+
+  2. This activates fail-fast behaviour and prevents hidden failures.
+
+  3. Refer to Section 1: Shebang and Safety Settings in the Beargrease Shell Script Protocol and Style Guide.
+EOF
+  exit 93
+fi
+
+# ----------------------------------------------------------------------
+# ✅ Completion
+# ----------------------------------------------------------------------
+
+log_ts "✅ Shebang and strict mode check passed."
