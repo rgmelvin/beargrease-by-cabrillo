@@ -1,4 +1,4 @@
-# 🐻 Beargrease Beginner Guide (Unified for Local and CI Use)
+# <img src="Images/BeargreaseIcon.png" alt="BeargreaseIcon" width="75" /> Beargrease Beginner Guide (Unified for Local and CI Use)
 
 > Version: `v1.1.0` • Maintained by: [Cabrillo! Labs](https://github.com/rgmelvin/beargrease-by-cabrillo)  
 > 
