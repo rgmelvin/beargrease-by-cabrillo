@@ -1,4 +1,4 @@
-#  <img src="/home/rgmelvin/Projects/cabrillo/beargrease-by-cabrillo/docs/Images/CabrilloIcon.png" alt="CabrilloIcon" style="zoom:7%;" />Cabrillo Labs 
+#  <img src="Images/CabrilloIcon.png" alt="CabrilloIcon" style="zoom:7%;" />Cabrillo Labs 
 
 # <img src="/home/rgmelvin/Projects/cabrillo/beargrease-by-cabrillo/docs/Images/BeargreaseIcon.png" alt="BeargreaseIcon" style="zoom:7%;" />Beargrease Shell Script Protocol and Style Guide
 
