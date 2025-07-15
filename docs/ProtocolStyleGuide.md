@@ -1,6 +1,6 @@
-#  <img src="Images/CabrilloIcon.png" alt="CabrilloIcon" width="200" />Cabrillo Labs 
+#  <img src="Images/CabrilloIcon.png" alt="CabrilloIcon" width="75" />Cabrillo Labs 
 
-# <img src="Images/BeargreaseIcon.png" alt="BeargreaseIcon" width="50" />Beargrease Shell Script Protocol and Style Guide
+# <img src="Images/BeargreaseIcon.png" alt="BeargreaseIcon" width="75" />Beargrease Shell Script Protocol and Style Guide
 
 **Version:** 1.0
  **Maintainer:** Cabrillo Labs, Ltd.
